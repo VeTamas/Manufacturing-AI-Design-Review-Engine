@@ -371,8 +371,8 @@ https://ollama.ai/download
 
 Verify:
 
-```bash
-ollama --version```
+bash
+```ollama --version```
 
 Pull a model
 ```ollama pull jamba2-3b-q6k```
