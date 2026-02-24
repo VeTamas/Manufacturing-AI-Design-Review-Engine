@@ -1,4 +1,4 @@
-# Manufacturing Design Review Engine  
+# Manufacturing AI Design Review Engine  
 ### Offline-First Manufacturability Intelligence System
 
 ---
