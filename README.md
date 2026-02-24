@@ -330,7 +330,8 @@ Default mode is local embeddings. To force it explicitly:
 
 ```$env:EMBEDDING_MODE="local"
 $env:LOCAL_EMBED_MODEL="BAAI/bge-small-en-v1.5"
-python scripts/build_kb_index.py```
+python scripts/build_kb_index.py
+```
 
 "Note: The first run may download the embedding model if it is not already cached.
 For fully air-gapped machines, you must provide the model files (HuggingFace cache or a prepacked model folder)."
