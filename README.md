@@ -3,249 +3,530 @@
 
 ---
 
-## Problem Statement
-
-There has long been a persistent gap between design engineers and manufacturing technicians.  
-Even when engineering calculations, simulations, and physics are correct, designs often turn out to be:
-
-- unnecessarily expensive to manufacture  
-- overly complex for the intended application  
-- difficult or time-consuming to produce  
-- prone to repeated design–manufacturing iteration cycles  
-
-This leads to extended development timelines, increased costs, and inefficient communication between design and production teams.
-
-This project explores how deterministic engineering analysis combined with modern AI assistance can help engineers identify manufacturability risks early in the design phase.
+> **Portfolio / public version**  
+> This repository is a **portfolio-safe release** of an industrial AI engineering prototype.  
+> **Production manufacturability heuristics and proprietary tuning are intentionally not included.**  
+> Process selection uses simplified deterministic baseline rules in `agent/scoring/portfolio_scoring.py`.  
+> No private datasets, API keys, FAISS indices, or internal optimization layers are committed.
 
 ---
 
 ## Executive Summary
 
-**Manufacturing Design Review Engine** is an offline-first manufacturability analysis system designed for mechanical and manufacturing engineers.
+**cncreviewcad** is an offline-first, privacy-focused manufacturability analysis engine for mechanical engineers.
 
-It is **not a chatbot** and does not rely on AI for engineering decisions.
+It is **not a chatbot**.
 
-Instead, it combines:
+It is a deterministic engineering decision system that:
 
-- deterministic manufacturability scoring  
-- CAD geometry analysis  
-- process classification logic  
-- optional AI-generated explanations  
+- Parses CAD geometry (STEP)
+- Applies rule-based manufacturability scoring
+- Performs geometry-driven manufacturing classification (AUTO mode)
+- Generates audit-safe engineering findings
+- Optionally enriches explanations using a local GPU LLM
+- Runs fully offline (RAG + embeddings + scoring independent of cloud)
 
-All core engineering decisions remain deterministic and auditable.  
-AI is used only for explanation and documentation support.
+Engineering decisions are deterministic.  
+AI is used only for explanation.
+
+This project focuses on reliable engineering decision support rather than generative AI workflows, targeting privacy-sensitive industrial environments where deterministic evaluation and offline capability are critical.
 
 ---
 
 ## Core Philosophy
 
 > Geometry first.  
-> Deterministic engineering logic first.  
-> AI only for explanation — never for engineering decisions.
+> Deterministic scoring first.  
+> AI only for explanation.
 
 Architecture layers:
 
 1. Geometry analysis  
-2. Deterministic manufacturability scoring  
-3. Process classification (AUTO mode)  
-4. Optional explanation layer (local LLM)  
-5. Reporting and audit trace generation  
+2. Deterministic manufacturing scoring  
+3. Process classification (AUTO)  
+4. Explanation layer (LLM optional)  
+5. Reporting + audit trace  
 
-LLM functionality is entirely optional.
-
----
-
-## What This Project Is
-
-- Deterministic manufacturability scoring engine  
-- Geometry-driven manufacturing classifier  
-- Offline design-for-manufacturability assistant  
-- Privacy-safe engineering evaluation tool  
-- Hybrid deterministic + AI explanation system  
+LLM is **not required** for manufacturability scoring.
 
 ---
 
-## What This Project Is Not
+## What This Is
 
-- Not a chatbot  
-- Not AI-driven engineering decision making  
-- Not cloud-dependent  
-- Not consumer AI tooling  
-- Not a hobby CAD assistant  
+- Deterministic manufacturability scoring engine
+- Geometry-driven manufacturing classifier
+- Offline Design-for-Manufacturability assistant
+- Privacy-safe engineering evaluation tool
+- Agentic explanation layer (optional)
 
 ---
 
-## System Architecture Overview
+## What This Is Not
 
-### Geometry Analysis Layer (Fully Local)
+- Not a chatbot
+- Not cloud dependent
+- Not LLM-driven classification
+- Not consumer AI tooling
+- Not hobby CAD assistant
 
-- STEP CAD ingestion  
-- Feature extraction heuristics  
-- Thin-wall detection  
-- Accessibility analysis  
-- Turning symmetry detection  
-- Sheet-metal heuristics  
-- Extrusion profile detection  
+---
 
-No cloud interaction required.
+## System Architecture
+
+### Geometry Layer (Fully Local)
+
+- STEP ingestion via local Python libs
+- CAD feature extraction
+- Bounding box analysis
+- Thin-wall detection
+- Accessibility heuristics
+- Turning symmetry detection
+- Sheet metal heuristics
+- Extrusion profile heuristics
+
+No cloud calls.
 
 ---
 
 ### Deterministic Manufacturing Scoring Engine
 
-Supported processes include:
+Supported processes:
 
-- CNC machining / turning  
-- Sheet metal fabrication  
-- Extrusion  
-- Additive manufacturing  
-- Casting and forging  
-- Metal injection molding (MIM)
+- CNC machining
+- CNC turning
+- Sheet metal fabrication
+- Extrusion
+- Additive manufacturing
+- Casting
+- Forging
+- MIM
 
-Key features:
+Features:
 
-- Geometry-driven AUTO classification  
-- Deterministic scoring logic  
-- Hybrid process modelling  
-- Risk flag generation  
-- Regression test validation  
+- Geometry-driven AUTO mode
+- Deterministic tie-break logic
+- Hybrid process modelling
+- Risk flag generation
+- Golden test validation
+- Material property modifiers (machinability, formability, castability, extrudability, AM readiness)
 
-Material properties influence manufacturability scoring through deterministic modifiers.
+**Material System:**
 
----
+- Material profiles with property vectors stored in `data/materials/material_profiles.json`
+- Deterministic resolver: maps user input strings to material profiles with properties
+- Material modifiers affect process scores (e.g., hard materials penalize CNC, high AM readiness boosts AM)
+- Backward compatible: existing "Steel"/"Aluminum"/"Plastic" inputs work as before
+- Supports: Steel, Aluminum, Plastic, Stainless Steel, Titanium (with AM properties)
 
-### Explanation Layer (Optional)
-
-Local LLM integration via:
-
-- Ollama runtime  
-- GPU inference (optional)  
-
-Used exclusively for:
-
-- engineering explanation  
-- report phrasing  
-- contextual clarification  
-
-Never used for:
-
-- scoring  
-- classification  
-- engineering decisions  
-
-The system functions fully without AI.
+Runs fully offline.
 
 ---
 
-### Local RAG Knowledge Layer
+### AUTO Process Selection Mode
 
-- Offline markdown knowledge base  
-- FAISS vector storage  
-- Local embeddings by default  
-- Optional OpenAI fallback  
+AUTO mode:
 
-Designed for privacy-sensitive industrial environments.
+- Geometry + bins driven
+- No user bias
+- Deterministic scoring
+- Golden test validated
+- Hybrid logic cannot override AUTO primary
 
----
-
-## Offline-First Operation
-
-Fully offline capabilities include:
-
-- CAD parsing  
-- Manufacturability scoring  
-- Knowledge retrieval  
-- Local embeddings  
-- Local LLM explanation  
-
-No cloud dependency required.
+AUTO is a convenience feature, not the core value.
 
 ---
 
-## Validation and Reliability
+### Explanation Layer (Local LLM Optional)
 
-Engineering reliability is prioritized via:
+Primary local LLM:
 
-- deterministic regression testing  
-- golden test datasets  
-- traceable scoring decisions  
-- explainable evaluation pipeline  
+- Ollama runtime
+- Default model: `jamba2-3b-q6k`
+- GPU inference
 
-Primary risk area: heuristic tuning, not system architecture.
+Used for:
+
+- Narrative explanation
+- Report phrasing
+- RAG enrichment
+- Engineering clarification
+
+Not used for:
+
+- Scoring
+- Classification
+- Rule evaluation
+
+LLM can be disabled completely.
 
 ---
 
-## Technology Stack
+### Local RAG (Fully Offline)
 
-- Python 3.11–3.13  
-- FAISS vector store  
-- Sentence-Transformers embeddings  
-- LangChain / LangGraph orchestration  
-- Streamlit UI  
-- Optional local LLM (Ollama)  
-- Deterministic scoring engine (pure Python)
+- Markdown knowledge base
+- FAISS vector store
+- Process-specific indexes
+- Deterministic triggering
+
+Embeddings:
+
+- Local (default)
+- OpenAI optional fallback
+
+No browsing. No data exfiltration.
 
 ---
 
-## Intended Users
+## Offline Operation
+
+Full offline includes:
+
+- CAD parsing
+- Deterministic scoring
+- Local FAISS store
+- Local embeddings
+- Local Ollama LLM
+- No OpenAI dependency
+
+Industrial default = offline-first.
+
+---
+
+## Cloud Usage (Optional)
+
+OpenAI:
+
+- Explanation fallback only
+- Legacy compatibility
+- Hybrid mode optional
+
+Not required for:
+
+- Scoring
+- Classification
+- CAD ingestion
+- RAG
+
+Migration toward fully local-only ongoing.
+
+---
+
+## Validation & Reliability
+
+Golden tests:
+
+    python scripts/run_golden_tests.py --auto
+
+Features:
+
+- Deterministic regression testing
+- AUTO alignment checks
+- Trace-on-fail debugging
+- Multi-pack validation
+- Stable baseline coverage
+
+Primary system risk:
+
+**Heuristic tuning — not architectural instability.**
+
+---
+
+## Tech Stack
+
+- Python 3.11–3.13
+- Ollama (local LLM runtime)
+- Jamba2 3B local model
+- FAISS vector store
+- Sentence-transformers embeddings
+- LangGraph agent workflow
+- LangChain orchestration
+- Streamlit UI
+- Pure Python deterministic scoring
+
+---
+
+## Target Users
 
 ### Primary
 
-- Mechanical engineers  
-- Manufacturing engineers  
-- DFM reviewers  
-- CNC and fabrication specialists  
+- Manufacturing engineers
+- Mechanical engineers
+- DFM reviewers
+- CNC / fabrication engineers
 
 ### Secondary
 
-- Engineering startups  
-- Privacy-sensitive industrial organizations  
-- CAD automation developers  
+- Engineering startups
+- Privacy-sensitive industrial orgs
+- CAD automation developers
+
+### Not Target
+
+- Hobby CAD users
+- Consumer AI users
+- General chatbot audiences
 
 ---
 
 ## Project Status
 
-### Stable Prototype
+### Stable
 
-- CAD ingestion  
-- Geometry feature extraction  
-- Deterministic scoring  
-- Manufacturing classification  
-- Offline RAG pipeline  
-- Optional LLM explanation  
-- Reporting workflows  
+- STEP ingestion
+- Geometry feature extraction
+- Deterministic scoring
+- AUTO process classification
+- Golden tests
+- Local RAG
+- Local LLM inference
+- CLI interface
+- Streamlit UI
+- Reporting pipeline
 
-### Not Yet Production-Hardened
+### Not Yet Production Hardened
 
-- Deployment packaging  
-- API layer  
-- Monitoring and logging hardening  
-- Security review  
-- CI/CD integration  
+- Packaging
+- API layer
+- Monitoring
+- Security hardening
+- Deployment automation
+- Error taxonomy
 
-This repository represents an engineering prototype and research exploration rather than a commercial product.
+Advanced engineering prototype with stable architecture.
 
 ---
 
-## Note on Public Repository
+## Knowledge Base (KB) indexing — rebuild FAISS indices
 
-To protect intellectual property and keep the repository portfolio-friendly:
+The RAG layer uses **local FAISS indices** built from the markdown knowledge base.  
+If you pull the repo fresh, change embedding mode/model, or modify KB markdown files, you must **rebuild the indices**.
 
-- Core heuristics and production scoring logic are simplified  
-- Some datasets and optimization layers are excluded  
-- Architecture and design principles are fully documented  
+### When do I need to rebuild?
+Rebuild FAISS indices if any of these are true:
 
-Detailed implementation discussion available upon request.
+- You changed `EMBEDDING_MODE` (`local` ↔ `openai`)
+- You changed the embedding model (e.g. `LOCAL_EMBED_MODEL`)
+- You pulled new/updated KB markdown files
+- You deleted `data/outputs/kb_index/` or want a clean rebuild
+- You see errors like `rag_index_missing`, `FileNotFoundError: index.faiss`, or dimension mismatch
+
+### Where are indices stored?
+Built indices are written to:
+
+- `data/outputs/kb_index/<process>/index.faiss`
+- `data/outputs/kb_index/<process>/metadata.json`
+
+Example processes: `cnc`, `sheet_metal`, `am`, `casting`, `forging`, etc.
+
+### Rebuild all indices (recommended)
+From repo root:
+
+```powershell
+python scripts/build_kb_index.py
+
+## Local embeddings (offline-friendly)
+
+Default mode is local embeddings. To force it explicitly:
+
+$env:EMBEDDING_MODE="local"
+$env:LOCAL_EMBED_MODEL="BAAI/bge-small-en-v1.5"
+python scripts/build_kb_index.py
+
+"Note: The first run may download the embedding model if it is not already cached.
+For fully air-gapped machines, you must provide the model files (HuggingFace cache or a prepacked model folder)."
+
+## Important: embedding dimension must match the index
+
+FAISS indices are embedding-dimension specific.
+If you switch embedding backends/models, you must rebuild all indices, otherwise you may get runtime errors or poor retrieval.
+
+Quick verification
+
+After rebuild, verify the index directories exist:
+
+data/outputs/kb_index/cnc/index.faiss
+
+data/outputs/kb_index/cnc/metadata.json
+
+## How to Run Locally (Windows)
+
+    python -m venv .venv
+    .\.venv\Scripts\Activate.ps1
+    pip install -r requirements.txt
+    streamlit run app/streamlit_app.py
+
+---
+
+## Optional Local LLM Explanations (Fully Offline)
+
+Manufacturing scoring and process classification remain fully deterministic.  
+The optional LLM layer is used only for explanation, phrasing, and report clarity.
+
+If no LLM is configured, the system still produces complete deterministic reports.
+
+### Install Ollama
+
+https://ollama.ai/download
+
+Verify:
+
+```bash
+ollama --version```
+
+Pull a model
+```ollama pull jamba2-3b-q6k```
+
+Enable local LLM
+
+Windows (PowerShell):
+```$env:LLM_MODE="local"
+$env:OLLAMA_BASE_URL="http://localhost:11434"
+$env:OLLAMA_MODEL="jamba2-3b-q6k"```
+
+Linux / macOS:
+```export LLM_MODE=local
+export OLLAMA_BASE_URL=http://localhost:11434
+export OLLAMA_MODEL=jamba2-3b-q6k```
+
+Then run:
+```streamlit run app/streamlit_app.py```
+
+Disable LLM completely
+```LLM_MODE=off```
+
+Notes:
+- Runs fully offline when using local models.
+- Cloud APIs are optional and disabled by default in offline mode.
+- Smaller models are recommended for local demo performance.
+
+---
+
+## Smoke test (quick manual check)
+
+Run the CLI on a sample STEP file to confirm the pipeline and portfolio scoring work:
+
+1. **With a STEP in the repo (e.g. under `data/uploads/` or any path):**
+   ```powershell
+   python scripts/run_step_cli.py path\to\your\file.STEP
+   ```
+2. **With process/material/volume overrides:**
+   ```powershell
+   python scripts/run_step_cli.py path\to\file.STEP --process AUTO --material Aluminum --volume Proto
+   ```
+3. **Expect:** A report with a **primary** process, **secondary** options, **findings**, and **reasons**. No errors.
+
+---
+
+## Desktop Mode (Native Window)
+
+    pip install -r requirements.txt -r requirements-desktop.txt
+    python scripts/run_desktop.py
+
+Modes:
+
+- Browser mode → streamlit run app/streamlit_app.py  
+- Desktop mode → python scripts/run_desktop.py  
+- Debug → python scripts/run_desktop.py --no-webview  
+
+Env overrides:
+
+- CNCR_UI_HOST (127.0.0.1)
+- CNCR_UI_PORT (8501)
+- CNCR_DEBUG=1
+
+---
+
+## Full Offline Mode (Embeddings + LLM)
+
+    $env:EMBEDDING_MODE="local"
+    $env:LLM_MODE="local"
+
+Rebuild FAISS index:
+
+    python scripts/build_kb_index.py
+
+Optional per process:
+
+    python scripts/build_kb_index.py --process cnc
+
+Test:
+
+    python scripts/test_local_embeddings.py
+    python scripts/test_kb_query_local.py
+
+Important:
+
+- Rebuild indices when switching embedding backend
+- OpenAI dim ≈ 1536
+- Local dim ≈ 384
+- Query embedding cache TTL ≈ 7 days
+
+Embedding env vars:
+
+- EMBEDDING_MODE = local | openai
+- LOCAL_EMBED_MODEL = BAAI/bge-small-en-v1.5
+- EMBEDDING_CACHE_DIR
+- EMBEDDING_BATCH_SIZE
+
+---
+
+## Quick CAD Test
+
+1. Upload STEP in sidebar  
+2. Check CAD bins preview  
+3. Toggle “Use CAD-derived bins”  
+4. Compare results vs manual bins  
+
+---
+
+## STEP CLI
+
+    python scripts/run_step_cli.py tests/golden/parts/cnc/CNC1.step
+    python scripts/run_step_cli.py tests/golden/parts/edge/EDGE2.STEP --process EXTRUSION --material Aluminum --volume Production
+    python scripts/run_step_cli.py edge/EDGE2.STEP
+
+Outputs:
+
+- Primary process
+- Secondary processes
+- Findings
+- Markdown + JSON reports in artifacts/reports/
+
+---
+
+## Roadmap
+
+### Short Term
+
+- Sheet metal detection refinement
+- Extrusion heuristic stabilization
+- Golden pack expansion
+- Documentation cleanup
+
+### Mid Term
+
+- Numeric scoring refactor
+- Unified manufacturing classifier
+- Confidence scoring reliability
+- Hybrid process modelling
+- Deployment packaging
+
+### Long Term
+
+- Cost estimation layer
+- Manufacturability simulation hooks
+- CAM integration
+- CAD plugins
+- Full offline industrial deployment
 
 ---
 
 ## Elevator Summary
 
-Offline manufacturability intelligence system combining:
+Offline-first manufacturability analysis engine.
 
-- deterministic engineering analysis  
-- CAD geometry evaluation  
-- optional AI explanation layer  
+Deterministic engineering scoring + optional local AI explanation.
 
-Designed for privacy-sensitive industrial workflows where reliability, auditability, and offline capability matter.
+CAD geometry → manufacturing evaluation → audit-ready report.
+
+Built for privacy-sensitive industrial workflows.s
