@@ -1,0 +1,59 @@
+{
+  "pass_count": 13,
+  "fail_count": 3,
+  "error_count": 0,
+  "failures": [
+    {
+      "case_id": "sm2_bins_steel_small",
+      "assertions": [
+        "primary=CNC not in ['SHEET_METAL']"
+      ],
+      "snapshot_diffs": [],
+      "reasons": [
+        "primary=CNC not in ['SHEET_METAL']"
+      ]
+    },
+    {
+      "case_id": "cnc2_bins_steel_small",
+      "assertions": [
+        "primary=SHEET_METAL not in ['CNC']"
+      ],
+      "snapshot_diffs": [],
+      "reasons": [
+        "primary=SHEET_METAL not in ['CNC']"
+      ]
+    },
+    {
+      "case_id": "extrusion3_bins_aluminum",
+      "assertions": [
+        "primary=CNC not in ['EXTRUSION']"
+      ],
+      "snapshot_diffs": [],
+      "reasons": [
+        "primary=CNC not in ['EXTRUSION']"
+      ]
+    }
+  ],
+  "errors": [],
+  "durations_ms": [
+    301.05,
+    142.71,
+    137.98,
+    131.7,
+    122.09,
+    151.2,
+    144.78,
+    114.63,
+    126.19,
+    132.72,
+    126.53,
+    132.93,
+    132.99,
+    120.3,
+    131.88,
+    111.48
+  ],
+  "duration_p50_ms": 132.72,
+  "duration_p95_ms": 301.05,
+  "duration_mean_ms": 141.32
+}

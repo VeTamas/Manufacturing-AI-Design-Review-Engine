@@ -1,0 +1,14 @@
+Run started
+Inputs validated
+Process selection node entered
+process_selection: eligible_processes=['AM', 'CASTING', 'CNC', 'CNC_TURNING', 'EXTRUSION', 'FORGING', 'MIM', 'SHEET_METAL']
+process_selection: gated_out=[('INJECTION_MOLDING', 'polymer process'), ('THERMOFORMING', 'polymer process'), ('COMPRESSION_MOLDING', 'polymer process')]
+PSI: user_text_len=0 preview=""
+process_selection: cad_lite status=ok t_est=6.9762 av_ratio=0.2867 t_over_min_dim=0.2325
+process_selection: sheet_metal_likelihood=med (source=cad_lite)
+process_selection: scorer_path=legacy_bins cad_status=none
+PSI: score_diff=2 (primary=CNC=5, second=SHEET_METAL=3)
+Process selection computed: primary=CNC user_selected=CNC
+process_selection: cad_uploaded=y evidence_available=n
+rules: cad_uploaded=y cad_status=none evidence_keys=[]
+report: process_recommendation present=True primary=CNC

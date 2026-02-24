@@ -1,0 +1,34 @@
+{
+  "pass_count": 0,
+  "fail_count": 1,
+  "error_count": 0,
+  "failures": [
+    {
+      "case_id": "im1_bins_plastic_high",
+      "assertions": [],
+      "snapshot_diffs": [
+        "primary: got 'INJECTION_MOLDING' expected None",
+        "gated_out: got ['CASTING', 'FORGING', 'MIM'] expected []",
+        "cad_lite_status: got 'failed' expected 'none'",
+        "sheet_metal_likelihood_level: got 'low' expected None",
+        "top_priorities: got ['PSI1', 'PASS1', 'PASS2'] expected []",
+        "findings count: got 3 expected 0"
+      ],
+      "reasons": [
+        "primary: got 'INJECTION_MOLDING' expected None",
+        "gated_out: got ['CASTING', 'FORGING', 'MIM'] expected []",
+        "cad_lite_status: got 'failed' expected 'none'",
+        "sheet_metal_likelihood_level: got 'low' expected None",
+        "top_priorities: got ['PSI1', 'PASS1', 'PASS2'] expected []",
+        "findings count: got 3 expected 0"
+      ]
+    }
+  ],
+  "errors": [],
+  "durations_ms": [
+    217.93
+  ],
+  "duration_p50_ms": 217.93,
+  "duration_p95_ms": 217.93,
+  "duration_mean_ms": 217.93
+}

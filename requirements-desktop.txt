@@ -1,0 +1,3 @@
+# Desktop launcher extra (run_desktop.py native window)
+# Install: pip install -r requirements.txt -r requirements-desktop.txt
+pywebview>=4.0,<6.0

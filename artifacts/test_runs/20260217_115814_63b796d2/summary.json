@@ -1,0 +1,183 @@
+{
+  "pass_count": 7,
+  "fail_count": 9,
+  "error_count": 0,
+  "failures": [
+    {
+      "case_id": "sm1_bins_steel_small",
+      "assertions": [],
+      "snapshot_diffs": [
+        "primary: got 'SHEET_METAL' expected 'CNC'",
+        "secondary: got ['CNC'] expected []",
+        "cad_lite_status: got 'ok' expected 'failed'",
+        "sheet_metal_likelihood_level: got 'high' expected 'low'",
+        "top_priorities: got ['PSI1', 'PASS1', 'PASS2'] expected ['PASS1', 'PASS2']",
+        "findings count: got 6 expected 5"
+      ],
+      "reasons": [
+        "primary: got 'SHEET_METAL' expected 'CNC'",
+        "secondary: got ['CNC'] expected []",
+        "cad_lite_status: got 'ok' expected 'failed'",
+        "sheet_metal_likelihood_level: got 'high' expected 'low'",
+        "top_priorities: got ['PSI1', 'PASS1', 'PASS2'] expected ['PASS1', 'PASS2']",
+        "findings count: got 6 expected 5"
+      ]
+    },
+    {
+      "case_id": "sm2_bins_steel_small",
+      "assertions": [
+        "primary=CNC not in ['SHEET_METAL']"
+      ],
+      "snapshot_diffs": [],
+      "reasons": [
+        "primary=CNC not in ['SHEET_METAL']"
+      ]
+    },
+    {
+      "case_id": "sm3_bins_steel_small",
+      "assertions": [],
+      "snapshot_diffs": [
+        "primary: got 'SHEET_METAL' expected 'CNC'",
+        "secondary: got ['CNC'] expected []",
+        "cad_lite_status: got 'ok' expected 'failed'",
+        "sheet_metal_likelihood_level: got 'high' expected 'low'",
+        "top_priorities: got ['PSI1', 'PASS1', 'PASS2'] expected ['PASS1', 'PASS2']",
+        "findings count: got 6 expected 5"
+      ],
+      "reasons": [
+        "primary: got 'SHEET_METAL' expected 'CNC'",
+        "secondary: got ['CNC'] expected []",
+        "cad_lite_status: got 'ok' expected 'failed'",
+        "sheet_metal_likelihood_level: got 'high' expected 'low'",
+        "top_priorities: got ['PSI1', 'PASS1', 'PASS2'] expected ['PASS1', 'PASS2']",
+        "findings count: got 6 expected 5"
+      ]
+    },
+    {
+      "case_id": "sm4_bins_steel_small",
+      "assertions": [],
+      "snapshot_diffs": [
+        "primary: got 'SHEET_METAL' expected 'CNC'",
+        "secondary: got ['CNC'] expected []",
+        "cad_lite_status: got 'ok' expected 'failed'",
+        "sheet_metal_likelihood_level: got 'high' expected 'low'",
+        "top_priorities: got ['PSI1', 'PASS1', 'PASS2'] expected ['PASS1', 'PASS2']",
+        "findings count: got 6 expected 5"
+      ],
+      "reasons": [
+        "primary: got 'SHEET_METAL' expected 'CNC'",
+        "secondary: got ['CNC'] expected []",
+        "cad_lite_status: got 'ok' expected 'failed'",
+        "sheet_metal_likelihood_level: got 'high' expected 'low'",
+        "top_priorities: got ['PSI1', 'PASS1', 'PASS2'] expected ['PASS1', 'PASS2']",
+        "findings count: got 6 expected 5"
+      ]
+    },
+    {
+      "case_id": "cnc2_bins_steel_small",
+      "assertions": [
+        "primary=SHEET_METAL not in ['CNC']"
+      ],
+      "snapshot_diffs": [],
+      "reasons": [
+        "primary=SHEET_METAL not in ['CNC']"
+      ]
+    },
+    {
+      "case_id": "extrusion1_bins_aluminum",
+      "assertions": [
+        "primary=CNC not in ['EXTRUSION']"
+      ],
+      "snapshot_diffs": [
+        "primary: got 'CNC' expected None",
+        "gated_out: got ['COMPRESSION_MOLDING', 'INJECTION_MOLDING', 'THERMOFORMING'] expected []",
+        "cad_lite_status: got 'ok' expected 'none'",
+        "sheet_metal_likelihood_level: got 'med' expected None",
+        "top_priorities: got ['PASS1', 'PASS2'] expected []",
+        "findings count: got 5 expected 0"
+      ],
+      "reasons": [
+        "primary=CNC not in ['EXTRUSION']"
+      ]
+    },
+    {
+      "case_id": "extrusion2_bins_aluminum",
+      "assertions": [],
+      "snapshot_diffs": [
+        "primary: got 'CNC' expected None",
+        "gated_out: got ['COMPRESSION_MOLDING', 'INJECTION_MOLDING', 'THERMOFORMING'] expected []",
+        "cad_lite_status: got 'failed' expected 'none'",
+        "sheet_metal_likelihood_level: got 'low' expected None",
+        "top_priorities: got ['PASS1', 'PASS2'] expected []",
+        "findings count: got 5 expected 0"
+      ],
+      "reasons": [
+        "primary: got 'CNC' expected None",
+        "gated_out: got ['COMPRESSION_MOLDING', 'INJECTION_MOLDING', 'THERMOFORMING'] expected []",
+        "cad_lite_status: got 'failed' expected 'none'",
+        "sheet_metal_likelihood_level: got 'low' expected None",
+        "top_priorities: got ['PASS1', 'PASS2'] expected []",
+        "findings count: got 5 expected 0"
+      ]
+    },
+    {
+      "case_id": "extrusion3_bins_aluminum",
+      "assertions": [
+        "primary=CNC not in ['EXTRUSION']"
+      ],
+      "snapshot_diffs": [
+        "primary: got 'CNC' expected None",
+        "gated_out: got ['COMPRESSION_MOLDING', 'INJECTION_MOLDING', 'THERMOFORMING'] expected []",
+        "cad_lite_status: got 'failed' expected 'none'",
+        "sheet_metal_likelihood_level: got 'low' expected None",
+        "top_priorities: got ['PASS1', 'PASS2'] expected []",
+        "findings count: got 5 expected 0"
+      ],
+      "reasons": [
+        "primary=CNC not in ['EXTRUSION']"
+      ]
+    },
+    {
+      "case_id": "im1_bins_plastic_high",
+      "assertions": [],
+      "snapshot_diffs": [
+        "primary: got 'INJECTION_MOLDING' expected None",
+        "gated_out: got ['CASTING', 'FORGING', 'MIM'] expected []",
+        "cad_lite_status: got 'failed' expected 'none'",
+        "sheet_metal_likelihood_level: got 'low' expected None",
+        "top_priorities: got ['PSI1', 'PASS1', 'PASS2'] expected []",
+        "findings count: got 3 expected 0"
+      ],
+      "reasons": [
+        "primary: got 'INJECTION_MOLDING' expected None",
+        "gated_out: got ['CASTING', 'FORGING', 'MIM'] expected []",
+        "cad_lite_status: got 'failed' expected 'none'",
+        "sheet_metal_likelihood_level: got 'low' expected None",
+        "top_priorities: got ['PSI1', 'PASS1', 'PASS2'] expected []",
+        "findings count: got 3 expected 0"
+      ]
+    }
+  ],
+  "errors": [],
+  "durations_ms": [
+    246.13,
+    108.88,
+    119.53,
+    120.89,
+    103.03,
+    117.69,
+    150.2,
+    139.82,
+    126.73,
+    133.2,
+    116.32,
+    111.85,
+    127.73,
+    128.97,
+    129.55,
+    105.25
+  ],
+  "duration_p50_ms": 126.73,
+  "duration_p95_ms": 246.13,
+  "duration_mean_ms": 130.36
+}

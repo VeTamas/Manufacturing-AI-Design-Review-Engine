@@ -1,0 +1,95 @@
+{
+  "version": 1,
+  "profiles": [
+    {
+      "id": "steel_generic",
+      "label": "Steel (generic)",
+      "family": "STEEL",
+      "aliases": ["steel", "carbon steel", "mild steel"],
+      "properties": {
+        "machinability": "MEDIUM",
+        "formability": "MEDIUM",
+        "castability": "MEDIUM",
+        "extrudability": "LOW",
+        "weldability": "HIGH",
+        "hardness_class": "MEDIUM",
+        "thermal_conductivity": "MEDIUM",
+        "corrosion_sensitivity": "MEDIUM",
+        "am_readiness": "MEDIUM",
+        "am_postprocess_intensity": "MEDIUM"
+      }
+    },
+    {
+      "id": "aluminum_generic",
+      "label": "Aluminum (generic)",
+      "family": "ALUMINUM",
+      "aliases": ["aluminium", "aluminum", "al6061", "6061", "6082"],
+      "properties": {
+        "machinability": "EASY",
+        "formability": "HIGH",
+        "castability": "MEDIUM",
+        "extrudability": "HIGH",
+        "weldability": "MEDIUM",
+        "hardness_class": "SOFT",
+        "thermal_conductivity": "HIGH",
+        "corrosion_sensitivity": "LOW",
+        "am_readiness": "MEDIUM",
+        "am_postprocess_intensity": "HIGH"
+      }
+    },
+    {
+      "id": "plastic_generic",
+      "label": "Thermoplastic (generic)",
+      "family": "THERMOPLASTIC",
+      "aliases": ["plastic", "abs", "pla", "petg", "nylon", "pa6", "pa12"],
+      "properties": {
+        "machinability": "EASY",
+        "formability": "HIGH",
+        "castability": "LOW",
+        "extrudability": "MEDIUM",
+        "weldability": "LOW",
+        "hardness_class": "SOFT",
+        "thermal_conductivity": "LOW",
+        "corrosion_sensitivity": "LOW",
+        "am_readiness": "HIGH",
+        "am_postprocess_intensity": "LOW"
+      }
+    },
+    {
+      "id": "stainless_generic",
+      "label": "Stainless Steel (generic)",
+      "family": "STAINLESS_STEEL",
+      "aliases": ["stainless", "304", "316"],
+      "properties": {
+        "machinability": "HARD",
+        "formability": "MEDIUM",
+        "castability": "MEDIUM",
+        "extrudability": "LOW",
+        "weldability": "HIGH",
+        "hardness_class": "HARD",
+        "thermal_conductivity": "LOW",
+        "corrosion_sensitivity": "LOW",
+        "am_readiness": "HIGH",
+        "am_postprocess_intensity": "HIGH"
+      }
+    },
+    {
+      "id": "titanium_generic",
+      "label": "Titanium (generic)",
+      "family": "TITANIUM",
+      "aliases": ["titanium", "ti6al4v", "ti-6al-4v"],
+      "properties": {
+        "machinability": "VERY_HARD",
+        "formability": "LOW",
+        "castability": "LOW",
+        "extrudability": "LOW",
+        "weldability": "MEDIUM",
+        "hardness_class": "HARD",
+        "thermal_conductivity": "LOW",
+        "corrosion_sensitivity": "LOW",
+        "am_readiness": "HIGH",
+        "am_postprocess_intensity": "HIGH"
+      }
+    }
+  ]
+}

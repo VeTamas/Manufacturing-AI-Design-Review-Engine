@@ -1,0 +1,18 @@
+Run started
+Inputs validated
+Process selection node entered
+process_selection: eligible_processes=['AM', 'CASTING', 'CNC', 'CNC_TURNING', 'EXTRUSION', 'FORGING', 'MIM', 'SHEET_METAL']
+process_selection: gated_out=[('INJECTION_MOLDING', 'polymer process'), ('THERMOFORMING', 'polymer process'), ('COMPRESSION_MOLDING', 'polymer process')]
+PSI: user_text_len=0 preview=""
+process_selection: cad_lite status=ok t_est=3.0477 av_ratio=0.6562 t_over_min_dim=0.2032
+process_selection: sheet_metal_likelihood=med (source=cad_lite)
+process_selection: extrusion_likelihood=low (coeff_var=0.352472 axis=X)
+process_selection: scorer_path=legacy_bins cad_status=none
+process_selection: bins_anchor applied selected=CNC margin=2 top_was=MIM
+PSI: score_diff=0 (primary=CNC=3, second=CNC=3)
+PSI tie-break: prefer user-selected flexible process (CNC) when score_diff <= 1 (compatible, no strong mismatch)
+PSI: final score_diff=0 (after tie-break, primary changed from MIM to CNC)
+Process selection computed: primary=CNC user_selected=CNC
+process_selection: cad_uploaded=y evidence_available=n
+rules: cad_uploaded=y cad_status=none evidence_keys=[]
+report: process_recommendation present=True primary=CNC

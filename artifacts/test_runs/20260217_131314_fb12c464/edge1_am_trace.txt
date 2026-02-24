@@ -1,0 +1,20 @@
+Run started
+Inputs validated
+Process selection node entered
+process_selection: eligible_processes=['AM', 'CASTING', 'CNC', 'CNC_TURNING', 'EXTRUSION', 'FORGING', 'MIM', 'SHEET_METAL']
+process_selection: gated_out=[('INJECTION_MOLDING', 'polymer process'), ('THERMOFORMING', 'polymer process'), ('COMPRESSION_MOLDING', 'polymer process')]
+PSI: user_text_len=0 preview=""
+process_selection: cad_lite status=failed
+process_selection: sheet_metal_likelihood=low (source=none)
+process_selection: extrusion_likelihood=none (coeff_var=? axis=?)
+process_selection: scorer_path=legacy_bins cad_status=none
+PSI: score_diff=3 (primary=CNC=5, second=AM=2)
+Process selection computed: primary=CNC user_selected=AM
+process_selection: cad_uploaded=y evidence_available=n
+Process selection mismatch: user_selected=AM but primary=CNC
+Rule triggered: Residual stress and distortion (metal LPBF) → HIGH severity
+ruleset_used=am_metal_lpbf
+am_fallback_generic=True
+Process selection warning added: selected=AM, recommended=CNC
+rules: cad_uploaded=y cad_status=none evidence_keys=[]
+report: process_recommendation present=True primary=CNC

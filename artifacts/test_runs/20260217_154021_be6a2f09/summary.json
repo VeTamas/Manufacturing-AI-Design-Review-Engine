@@ -1,0 +1,168 @@
+{
+  "pass_count": 31,
+  "fail_count": 10,
+  "error_count": 0,
+  "failures": [
+    {
+      "case_id": "cnc1_bins_steel_small",
+      "assertions": [],
+      "snapshot_diffs": [
+        "secondary: got ['EXTRUSION'] expected []"
+      ],
+      "reasons": [
+        "secondary: got ['EXTRUSION'] expected []"
+      ]
+    },
+    {
+      "case_id": "cnc2_bins_steel_small",
+      "assertions": [],
+      "snapshot_diffs": [
+        "secondary: got ['EXTRUSION'] expected []"
+      ],
+      "reasons": [
+        "secondary: got ['EXTRUSION'] expected []"
+      ]
+    },
+    {
+      "case_id": "cnc3_bins_steel_small",
+      "assertions": [],
+      "snapshot_diffs": [
+        "secondary: got ['EXTRUSION'] expected []"
+      ],
+      "reasons": [
+        "secondary: got ['EXTRUSION'] expected []"
+      ]
+    },
+    {
+      "case_id": "turning1_bins_steel",
+      "assertions": [],
+      "snapshot_diffs": [
+        "secondary: got ['AM', 'EXTRUSION'] expected ['AM']"
+      ],
+      "reasons": [
+        "secondary: got ['AM', 'EXTRUSION'] expected ['AM']"
+      ]
+    },
+    {
+      "case_id": "edge2_extrusion",
+      "assertions": [
+        "primary=SHEET_METAL not in ['EXTRUSION']"
+      ],
+      "snapshot_diffs": [
+        "primary: got 'SHEET_METAL' expected 'EXTRUSION'",
+        "secondary: got ['EXTRUSION'] expected ['SHEET_METAL', 'CNC']",
+        "extrusion_likelihood_level: got 'med' expected 'low'",
+        "top_priorities: got ['EXTR2', 'PSI1', 'HYBRID_EXTR1'] expected ['EXTR2']",
+        "findings count: got 3 expected 1"
+      ],
+      "reasons": [
+        "primary=SHEET_METAL not in ['EXTRUSION']"
+      ]
+    },
+    {
+      "case_id": "cnc1_bins_template",
+      "assertions": [],
+      "snapshot_diffs": [
+        "secondary: got ['EXTRUSION'] expected []"
+      ],
+      "reasons": [
+        "secondary: got ['EXTRUSION'] expected []"
+      ]
+    },
+    {
+      "case_id": "cnc2_bins_template",
+      "assertions": [],
+      "snapshot_diffs": [
+        "secondary: got ['EXTRUSION'] expected []"
+      ],
+      "reasons": [
+        "secondary: got ['EXTRUSION'] expected []"
+      ]
+    },
+    {
+      "case_id": "cnc3_bins_template",
+      "assertions": [],
+      "snapshot_diffs": [
+        "secondary: got ['EXTRUSION'] expected []"
+      ],
+      "reasons": [
+        "secondary: got ['EXTRUSION'] expected []"
+      ]
+    },
+    {
+      "case_id": "extrusion1_bins_template",
+      "assertions": [],
+      "snapshot_diffs": [
+        "top_priorities: got ['HYBRID_EXTR1'] expected []",
+        "findings count: got 1 expected 0"
+      ],
+      "reasons": [
+        "top_priorities: got ['HYBRID_EXTR1'] expected []",
+        "findings count: got 1 expected 0"
+      ]
+    },
+    {
+      "case_id": "edge2_bins_template",
+      "assertions": [],
+      "snapshot_diffs": [
+        "secondary: got ['EXTRUSION', 'CNC_TURNING'] expected ['CNC_TURNING']",
+        "extrusion_likelihood_level: got 'med' expected 'low'",
+        "top_priorities: got ['HYBRID_EXTR1', 'PASS1', 'PASS2'] expected ['PASS1', 'PASS2']",
+        "findings count: got 3 expected 2"
+      ],
+      "reasons": [
+        "secondary: got ['EXTRUSION', 'CNC_TURNING'] expected ['CNC_TURNING']",
+        "extrusion_likelihood_level: got 'med' expected 'low'",
+        "top_priorities: got ['HYBRID_EXTR1', 'PASS1', 'PASS2'] expected ['PASS1', 'PASS2']",
+        "findings count: got 3 expected 2"
+      ]
+    }
+  ],
+  "errors": [],
+  "durations_ms": [
+    396.96,
+    91.4,
+    135.3,
+    114.14,
+    135.25,
+    127.56,
+    109.71,
+    102.12,
+    134.61,
+    125.29,
+    99.88,
+    146.78,
+    112.05,
+    106.37,
+    138.72,
+    96.45,
+    110.09,
+    162.92,
+    108.95,
+    91.59,
+    91.1,
+    95.2,
+    91.52,
+    90.62,
+    90.99,
+    107.23,
+    95.51,
+    91.33,
+    91.67,
+    199.45,
+    98.59,
+    115.08,
+    112.0,
+    94.72,
+    101.23,
+    90.92,
+    92.42,
+    111.23,
+    108.4,
+    122.5,
+    107.7
+  ],
+  "duration_p50_ms": 107.7,
+  "duration_p95_ms": 162.92,
+  "duration_mean_ms": 118.18
+}

@@ -1,0 +1,19 @@
+Run started
+Inputs validated
+Process selection node entered
+process_selection: eligible_processes=['AM', 'CASTING', 'CNC', 'CNC_TURNING', 'EXTRUSION', 'FORGING', 'MIM', 'SHEET_METAL']
+process_selection: gated_out=[('INJECTION_MOLDING', 'polymer process'), ('THERMOFORMING', 'polymer process'), ('COMPRESSION_MOLDING', 'polymer process')]
+PSI: user_text_len=0 preview=""
+process_selection: cad_lite status=ok t_est=2.8352 av_ratio=0.7054 t_over_min_dim=0.189
+process_selection: sheet_metal_likelihood=med (source=cad_lite)
+process_selection: extrusion_likelihood=high (coeff_var=0.0 axis=Y)
+process_selection: am_likelihood=low (source=bins_only)
+process_selection: bins_boost EXTRUSION high +5; bins_penalize MIM -6
+process_selection: bins_guard MIM cap for Aluminum
+process_selection: scorer_path=legacy_bins cad_status=none
+PSI: score_diff=3 (primary=EXTRUSION=6, second=SHEET_METAL=3)
+Process selection computed: primary=EXTRUSION user_selected=EXTRUSION
+process_selection: cad_uploaded=y evidence_available=n
+ruleset_used=extrusion
+rules: cad_uploaded=y cad_status=none evidence_keys=[]
+report: process_recommendation present=True primary=EXTRUSION

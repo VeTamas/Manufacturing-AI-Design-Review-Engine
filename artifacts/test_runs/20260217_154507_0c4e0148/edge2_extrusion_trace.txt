@@ -1,0 +1,24 @@
+Run started
+Inputs validated
+Process selection node entered
+process_selection: eligible_processes=['AM', 'CASTING', 'CNC', 'CNC_TURNING', 'EXTRUSION', 'FORGING', 'MIM', 'SHEET_METAL']
+process_selection: gated_out=[('INJECTION_MOLDING', 'polymer process'), ('THERMOFORMING', 'polymer process'), ('COMPRESSION_MOLDING', 'polymer process')]
+PSI: user_text_len=0 preview=""
+process_selection: cad_lite status=ok t_est=3.0477 av_ratio=0.6562 t_over_min_dim=0.2032
+process_selection: sheet_metal_likelihood=med (source=cad_lite)
+process_selection: long_profile upgrade extrusion_likelihood low -> med
+process_selection: extrusion_likelihood=med (coeff_var=0.352472 axis=X)
+process_selection: am_likelihood=low (source=bins_only)
+process_selection: bins_boost EXTRUSION med +3; bins_penalize MIM -3
+process_selection: bins_guard MIM cap for Aluminum
+process_selection: scorer_path=legacy_bins cad_status=none
+process_selection: bins_anchor applied selected=EXTRUSION margin=2 top_was=SHEET_METAL
+PSI: score_diff=0 (primary=EXTRUSION=6, second=EXTRUSION=6)
+PSI: final score_diff=0 (after tie-break, primary changed from SHEET_METAL to EXTRUSION)
+Process selection computed: primary=EXTRUSION user_selected=EXTRUSION
+process_selection: cad_uploaded=y evidence_available=n
+Rule triggered: Non-uniform wall thickness (distortion/warpage risk) → HIGH severity
+ruleset_used=extrusion
+Hybrid offer added: EXTRUSION + CNC finishing (HYBRID_EXTR1)
+rules: cad_uploaded=y cad_status=none evidence_keys=[]
+report: process_recommendation present=True primary=EXTRUSION

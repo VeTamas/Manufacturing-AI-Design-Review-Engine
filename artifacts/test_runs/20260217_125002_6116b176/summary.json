@@ -1,0 +1,24 @@
+{
+  "pass_count": 0,
+  "fail_count": 1,
+  "error_count": 0,
+  "failures": [
+    {
+      "case_id": "cnc1_bins_template",
+      "assertions": [],
+      "snapshot_diffs": [
+        "no golden snapshot (run with --update-golden)"
+      ],
+      "reasons": [
+        "no golden snapshot (run with --update-golden)"
+      ]
+    }
+  ],
+  "errors": [],
+  "durations_ms": [
+    244.49
+  ],
+  "duration_p50_ms": 244.49,
+  "duration_p95_ms": 244.49,
+  "duration_mean_ms": 244.49
+}

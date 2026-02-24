@@ -1,0 +1,108 @@
+# CNC Design Review + DFM Report
+
+## Input summary
+
+- Manufacturing process: EXTRUSION
+
+- Material: Aluminum
+- Production volume: Production
+- Load type: Static
+- Tolerance criticality: Medium
+
+- Part size: Medium
+- Min internal radius: Medium
+- Min wall thickness: Thin
+- Hole depth class: None
+- Pocket aspect class: OK
+- Feature variety: Low
+- Accessibility risk: Low
+- Has clamping faces: True
+
+
+## Process recommendation
+
+- Primary: **EXTRUSION**
+
+- Secondary: SHEET_METAL, CNC
+
+- Less suitable (given current inputs): AM, CASTING, FORGING, MIM
+
+- Not applicable (hard gated): INJECTION_MOLDING (polymer process), THERMOFORMING (polymer process), COMPRESSION_MOLDING (polymer process)
+
+- Tradeoffs:
+
+  - Tooling lead time vs unit cost: IM/Sheet metal need tooling; CNC/AM suit low volume.
+
+  - Tolerance and finish: Define critical interfaces; plan post-machining or inspection where needed.
+
+  - Risk drivers: Warpage (IM/AM), supports (AM), setups (CNC/Sheet metal) affect feasibility.
+
+  - Volume sensitivity: IM and sheet metal favor production runs; CNC/AM suit proto and small batch.
+
+  - Documentation: 2D drawing and scale confirmation improve tolerance and process selection.
+
+
+
+## Manufacturing confidence inputs
+
+- CAD uploaded: yes
+
+- CAD analysis status: none
+
+- CAD evidence used in rules: no
+
+- CAD Lite analysis: failed
+
+- Extrusion Lite analysis: failed
+
+- Extrusion likelihood: none (source=none)
+
+- Sheet metal likelihood: med (source=bins_only)
+
+_Confidence inputs not provided._
+
+
+
+## Top priorities
+
+- [HIGH] Non-uniform wall thickness (distortion/warpage risk) (EXTR2)
+
+
+
+## Findings (HIGH)
+
+- **Non-uniform wall thickness (distortion/warpage risk)** (EXTR2) — Non-uniform thickness leads to uneven cooling, residual stress, and warping in extrusion.
+  - Recommendation: Aim for adjacent wall thickness ratio < 2:1; use smooth transitions; avoid thin flanges.
+
+## Findings (MEDIUM)
+
+_None_
+
+## Findings (LOW)
+
+_None_
+
+## Action Checklist
+
+- [ ] Address HIGH and MEDIUM findings before release.
+- [ ] Apply recommended design changes for critical features.
+- [ ] Re-verify tolerances and interfaces after changes.
+
+## Assumptions
+
+- Inputs and part summary reflect current design intent.
+- Manufacturing process and material choices are as specified.
+
+## Usage (tokens & cost)
+
+_Usage not available._
+
+
+## LLM usage by node
+
+_Not available._
+
+
+## Agent confidence & limitations
+
+_Not available._

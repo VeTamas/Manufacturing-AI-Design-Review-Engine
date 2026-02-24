@@ -1,0 +1,21 @@
+Run started
+Inputs validated
+Process selection node entered
+process_selection: gated_out process=CASTING reason=metal process
+process_selection: gated_out process=FORGING reason=metal process
+process_selection: gated_out process=MIM reason=metal process
+process_selection: eligible_processes=['AM', 'CNC', 'CNC_TURNING', 'COMPRESSION_MOLDING', 'EXTRUSION', 'INJECTION_MOLDING', 'SHEET_METAL', 'THERMOFORMING']
+PSI: user_text_len=0 preview=""
+process_selection: scorer_path=legacy_bins cad_status=none
+PSI: score_diff=5 (primary=INJECTION_MOLDING=10, second=THERMOFORMING=5)
+Process selection computed: primary=INJECTION_MOLDING user_selected=INJECTION_MOLDING
+process_selection: cad_uploaded=n evidence_available=n
+rules: cad_uploaded=n cad_status=none evidence_keys=[]
+explain: skipping LLM explanation (no findings & RAG disabled)
+Agent decision: accept
+self_review: confidence_base=0.75 source=deterministic
+self_review: cad_uploaded=n cad_status=none
+Performed self-critique and confidence scoring
+self_review: flag_adjustments=missing_cad-0.05, no_rag_sources-0.02, no_numeric_tolerances-0.03, geometry_uncertain-0.02, unknown_shop_constraints-0.02
+self_review: adjusted_base=0.61 llm_delta=+0.00 final=0.61
+report: process_recommendation present=True primary=INJECTION_MOLDING

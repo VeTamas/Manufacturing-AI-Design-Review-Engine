@@ -1,0 +1,180 @@
+{
+  "pass_count": 7,
+  "fail_count": 5,
+  "error_count": 4,
+  "failures": [
+    {
+      "case_id": "sm1_bins_steel_small",
+      "assertions": [],
+      "snapshot_diffs": [
+        "primary: got 'SHEET_METAL' expected 'CNC'",
+        "secondary: got ['CNC'] expected []",
+        "cad_lite_status: got 'ok' expected 'failed'",
+        "sheet_metal_likelihood_level: got 'high' expected 'low'",
+        "top_priorities: got ['PSI1', 'PASS1', 'PASS2'] expected ['PASS1', 'PASS2']",
+        "findings count: got 6 expected 5"
+      ]
+    },
+    {
+      "case_id": "sm2_bins_steel_small",
+      "assertions": [
+        "primary=CNC not in ['SHEET_METAL']"
+      ],
+      "snapshot_diffs": []
+    },
+    {
+      "case_id": "sm3_bins_steel_small",
+      "assertions": [],
+      "snapshot_diffs": [
+        "primary: got 'SHEET_METAL' expected 'CNC'",
+        "secondary: got ['CNC'] expected []",
+        "cad_lite_status: got 'ok' expected 'failed'",
+        "sheet_metal_likelihood_level: got 'high' expected 'low'",
+        "top_priorities: got ['PSI1', 'PASS1', 'PASS2'] expected ['PASS1', 'PASS2']",
+        "findings count: got 6 expected 5"
+      ]
+    },
+    {
+      "case_id": "sm4_bins_steel_small",
+      "assertions": [],
+      "snapshot_diffs": [
+        "primary: got 'SHEET_METAL' expected 'CNC'",
+        "secondary: got ['CNC'] expected []",
+        "cad_lite_status: got 'ok' expected 'failed'",
+        "sheet_metal_likelihood_level: got 'high' expected 'low'",
+        "top_priorities: got ['PSI1', 'PASS1', 'PASS2'] expected ['PASS1', 'PASS2']",
+        "findings count: got 6 expected 5"
+      ]
+    },
+    {
+      "case_id": "cnc2_bins_steel_small",
+      "assertions": [
+        "primary=SHEET_METAL not in ['CNC']"
+      ],
+      "snapshot_diffs": []
+    }
+  ],
+  "errors": [
+    {
+      "case_id": "extrusion1_bins_aluminum",
+      "error": "primary=None (no process recommendation in state)",
+      "debug_state_keys": [
+        "inputs",
+        "part_summary",
+        "rag_enabled",
+        "confidence_inputs",
+        "cad_metrics",
+        "user_text",
+        "description",
+        "trace",
+        "_summary_source",
+        "part_summary_mode",
+        "step_path",
+        "part_metrics_provider",
+        "error"
+      ],
+      "debug_candidates": {
+        "process_recommendation": null,
+        "process_selection": null,
+        "psi": null,
+        "recommendation": null
+      }
+    },
+    {
+      "case_id": "extrusion2_bins_aluminum",
+      "error": "primary=None (no process recommendation in state)",
+      "debug_state_keys": [
+        "inputs",
+        "part_summary",
+        "rag_enabled",
+        "confidence_inputs",
+        "cad_metrics",
+        "user_text",
+        "description",
+        "trace",
+        "_summary_source",
+        "part_summary_mode",
+        "step_path",
+        "part_metrics_provider",
+        "error"
+      ],
+      "debug_candidates": {
+        "process_recommendation": null,
+        "process_selection": null,
+        "psi": null,
+        "recommendation": null
+      }
+    },
+    {
+      "case_id": "extrusion3_bins_aluminum",
+      "error": "primary=None (no process recommendation in state)",
+      "debug_state_keys": [
+        "inputs",
+        "part_summary",
+        "rag_enabled",
+        "confidence_inputs",
+        "cad_metrics",
+        "user_text",
+        "description",
+        "trace",
+        "_summary_source",
+        "part_summary_mode",
+        "step_path",
+        "part_metrics_provider",
+        "error"
+      ],
+      "debug_candidates": {
+        "process_recommendation": null,
+        "process_selection": null,
+        "psi": null,
+        "recommendation": null
+      }
+    },
+    {
+      "case_id": "im1_bins_plastic_high",
+      "error": "primary=None (no process recommendation in state)",
+      "debug_state_keys": [
+        "inputs",
+        "part_summary",
+        "rag_enabled",
+        "confidence_inputs",
+        "cad_metrics",
+        "user_text",
+        "description",
+        "trace",
+        "_summary_source",
+        "part_summary_mode",
+        "step_path",
+        "part_metrics_provider",
+        "error"
+      ],
+      "debug_candidates": {
+        "process_recommendation": null,
+        "process_selection": null,
+        "psi": null,
+        "recommendation": null
+      }
+    }
+  ],
+  "durations_ms": [
+    217.27,
+    81.52,
+    85.25,
+    84.09,
+    86.36,
+    85.19,
+    83.51,
+    83.41,
+    87.29,
+    88.38,
+    95.24,
+    93.45,
+    92.71,
+    82.52,
+    84.46,
+    83.48
+  ],
+  "duration_p50_ms": 85.25,
+  "duration_p95_ms": 217.27,
+  "duration_mean_ms": 94.63
+}

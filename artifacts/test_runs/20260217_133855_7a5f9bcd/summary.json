@@ -1,0 +1,198 @@
+{
+  "pass_count": 30,
+  "fail_count": 11,
+  "error_count": 0,
+  "failures": [
+    {
+      "case_id": "sm2_bins_steel_small",
+      "assertions": [],
+      "snapshot_diffs": [
+        "secondary: got [] expected ['CNC']"
+      ],
+      "reasons": [
+        "secondary: got [] expected ['CNC']"
+      ]
+    },
+    {
+      "case_id": "extrusion1_bins_aluminum",
+      "assertions": [],
+      "snapshot_diffs": [
+        "secondary: got [] expected ['MIM']"
+      ],
+      "reasons": [
+        "secondary: got [] expected ['MIM']"
+      ]
+    },
+    {
+      "case_id": "extrusion2_bins_aluminum",
+      "assertions": [],
+      "snapshot_diffs": [
+        "secondary: got ['CNC_TURNING'] expected ['MIM', 'CNC_TURNING']"
+      ],
+      "reasons": [
+        "secondary: got ['CNC_TURNING'] expected ['MIM', 'CNC_TURNING']"
+      ]
+    },
+    {
+      "case_id": "extrusion3_bins_aluminum",
+      "assertions": [],
+      "snapshot_diffs": [
+        "secondary: got ['CNC_TURNING'] expected ['MIM', 'CNC_TURNING']"
+      ],
+      "reasons": [
+        "secondary: got ['CNC_TURNING'] expected ['MIM', 'CNC_TURNING']"
+      ]
+    },
+    {
+      "case_id": "edge1_am",
+      "assertions": [],
+      "snapshot_diffs": [
+        "primary: got 'AM' expected 'CNC'",
+        "secondary: got ['CNC'] expected ['AM']",
+        "top_priorities: got ['LPBF1', 'AM2', 'LPBF10'] expected ['LPBF2', 'PSI1']",
+        "findings count: got 7 expected 5"
+      ],
+      "reasons": [
+        "primary: got 'AM' expected 'CNC'",
+        "secondary: got ['CNC'] expected ['AM']",
+        "top_priorities: got ['LPBF1', 'AM2', 'LPBF10'] expected ['LPBF2', 'PSI1']",
+        "findings count: got 7 expected 5"
+      ]
+    },
+    {
+      "case_id": "edge2_extrusion",
+      "assertions": [],
+      "snapshot_diffs": [
+        "primary: got 'EXTRUSION' expected 'MIM'",
+        "secondary: got ['SHEET_METAL', 'CNC'] expected ['CNC', 'CNC_TURNING']",
+        "top_priorities: got ['EXTR2'] expected ['HYBRID1']",
+        "findings[0]: got {'rule_id': 'EXTR2', 'severity': 'HIGH', 'process': None} expected {'rule_id': 'HYBRID1', 'severity': 'MEDIUM', 'process': None}"
+      ],
+      "reasons": [
+        "primary: got 'EXTRUSION' expected 'MIM'",
+        "secondary: got ['SHEET_METAL', 'CNC'] expected ['CNC', 'CNC_TURNING']",
+        "top_priorities: got ['EXTR2'] expected ['HYBRID1']",
+        "findings[0]: got {'rule_id': 'EXTR2', 'severity': 'HIGH', 'process': None} expected {'rule_id': 'HYBRID1', 'severity': 'MEDIUM', 'process': None}"
+      ]
+    },
+    {
+      "case_id": "extrusion1_bins_template",
+      "assertions": [],
+      "snapshot_diffs": [
+        "secondary: got [] expected ['MIM']"
+      ],
+      "reasons": [
+        "secondary: got [] expected ['MIM']"
+      ]
+    },
+    {
+      "case_id": "extrusion2_bins_template",
+      "assertions": [],
+      "snapshot_diffs": [
+        "primary: got 'EXTRUSION' expected 'MIM'",
+        "secondary: got ['SHEET_METAL', 'CNC'] expected ['CNC', 'CNC_TURNING']",
+        "sheet_metal_likelihood_level: got 'med' expected 'low'",
+        "top_priorities: got ['EXTR2'] expected ['HYBRID1']",
+        "findings[0]: got {'rule_id': 'EXTR2', 'severity': 'HIGH', 'process': None} expected {'rule_id': 'HYBRID1', 'severity': 'MEDIUM', 'process': None}"
+      ],
+      "reasons": [
+        "primary: got 'EXTRUSION' expected 'MIM'",
+        "secondary: got ['SHEET_METAL', 'CNC'] expected ['CNC', 'CNC_TURNING']",
+        "sheet_metal_likelihood_level: got 'med' expected 'low'",
+        "top_priorities: got ['EXTR2'] expected ['HYBRID1']",
+        "findings[0]: got {'rule_id': 'EXTR2', 'severity': 'HIGH', 'process': None} expected {'rule_id': 'HYBRID1', 'severity': 'MEDIUM', 'process': None}"
+      ]
+    },
+    {
+      "case_id": "extrusion3_bins_template",
+      "assertions": [],
+      "snapshot_diffs": [
+        "primary: got 'EXTRUSION' expected 'MIM'",
+        "secondary: got ['SHEET_METAL', 'CNC'] expected ['CNC', 'CNC_TURNING']",
+        "sheet_metal_likelihood_level: got 'med' expected 'low'",
+        "top_priorities: got ['EXTR2'] expected ['HYBRID1']",
+        "findings[0]: got {'rule_id': 'EXTR2', 'severity': 'HIGH', 'process': None} expected {'rule_id': 'HYBRID1', 'severity': 'MEDIUM', 'process': None}"
+      ],
+      "reasons": [
+        "primary: got 'EXTRUSION' expected 'MIM'",
+        "secondary: got ['SHEET_METAL', 'CNC'] expected ['CNC', 'CNC_TURNING']",
+        "sheet_metal_likelihood_level: got 'med' expected 'low'",
+        "top_priorities: got ['EXTR2'] expected ['HYBRID1']",
+        "findings[0]: got {'rule_id': 'EXTR2', 'severity': 'HIGH', 'process': None} expected {'rule_id': 'HYBRID1', 'severity': 'MEDIUM', 'process': None}"
+      ]
+    },
+    {
+      "case_id": "sm2_bins_template",
+      "assertions": [],
+      "snapshot_diffs": [
+        "primary: got 'SHEET_METAL' expected 'CNC'",
+        "sheet_metal_likelihood_level: got 'med' expected 'low'",
+        "top_priorities: got [] expected ['PSI1']",
+        "findings count: got 3 expected 4"
+      ],
+      "reasons": [
+        "primary: got 'SHEET_METAL' expected 'CNC'",
+        "sheet_metal_likelihood_level: got 'med' expected 'low'",
+        "top_priorities: got [] expected ['PSI1']",
+        "findings count: got 3 expected 4"
+      ]
+    },
+    {
+      "case_id": "edge2_bins_template",
+      "assertions": [],
+      "snapshot_diffs": [
+        "secondary: got ['CNC_TURNING'] expected ['MIM', 'CNC_TURNING']"
+      ],
+      "reasons": [
+        "secondary: got ['CNC_TURNING'] expected ['MIM', 'CNC_TURNING']"
+      ]
+    }
+  ],
+  "errors": [],
+  "durations_ms": [
+    315.31,
+    86.69,
+    183.79,
+    123.38,
+    116.44,
+    135.98,
+    132.12,
+    113.92,
+    141.29,
+    108.13,
+    110.1,
+    155.83,
+    125.39,
+    111.84,
+    116.43,
+    110.61,
+    120.9,
+    167.01,
+    116.01,
+    105.64,
+    106.68,
+    109.32,
+    120.87,
+    114.72,
+    114.67,
+    124.44,
+    115.91,
+    97.97,
+    98.38,
+    235.28,
+    92.63,
+    111.04,
+    107.92,
+    122.02,
+    116.74,
+    115.51,
+    125.47,
+    122.93,
+    92.79,
+    98.08,
+    100.38
+  ],
+  "duration_p50_ms": 115.91,
+  "duration_p95_ms": 183.79,
+  "duration_mean_ms": 125.38
+}

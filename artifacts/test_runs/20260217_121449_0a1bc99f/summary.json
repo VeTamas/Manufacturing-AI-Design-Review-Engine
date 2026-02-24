@@ -1,0 +1,49 @@
+{
+  "pass_count": 14,
+  "fail_count": 2,
+  "error_count": 0,
+  "failures": [
+    {
+      "case_id": "sm2_bins_steel_small",
+      "assertions": [
+        "primary=CNC not in ['SHEET_METAL']"
+      ],
+      "snapshot_diffs": [],
+      "reasons": [
+        "primary=CNC not in ['SHEET_METAL']"
+      ]
+    },
+    {
+      "case_id": "cnc2_bins_steel_small",
+      "assertions": [
+        "primary=SHEET_METAL not in ['CNC']"
+      ],
+      "snapshot_diffs": [],
+      "reasons": [
+        "primary=SHEET_METAL not in ['CNC']"
+      ]
+    }
+  ],
+  "errors": [],
+  "durations_ms": [
+    239.49,
+    112.66,
+    117.19,
+    100.32,
+    101.28,
+    109.34,
+    124.47,
+    100.21,
+    96.06,
+    98.07,
+    133.46,
+    116.51,
+    110.22,
+    107.26,
+    129.28,
+    114.51
+  ],
+  "duration_p50_ms": 112.66,
+  "duration_p95_ms": 239.49,
+  "duration_mean_ms": 119.4
+}

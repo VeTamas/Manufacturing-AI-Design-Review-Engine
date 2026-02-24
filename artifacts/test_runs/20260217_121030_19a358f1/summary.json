@@ -1,0 +1,30 @@
+{
+  "pass_count": 0,
+  "fail_count": 1,
+  "error_count": 0,
+  "failures": [
+    {
+      "case_id": "extrusion1_bins_aluminum",
+      "assertions": [],
+      "snapshot_diffs": [
+        "primary: got 'EXTRUSION' expected 'CNC'",
+        "secondary: got ['MIM'] expected ['MIM', 'CNC_TURNING']",
+        "top_priorities: got ['HYBRID1', 'PASS1', 'PASS2'] expected ['PASS1', 'PASS2']",
+        "findings count: got 3 expected 2"
+      ],
+      "reasons": [
+        "primary: got 'EXTRUSION' expected 'CNC'",
+        "secondary: got ['MIM'] expected ['MIM', 'CNC_TURNING']",
+        "top_priorities: got ['HYBRID1', 'PASS1', 'PASS2'] expected ['PASS1', 'PASS2']",
+        "findings count: got 3 expected 2"
+      ]
+    }
+  ],
+  "errors": [],
+  "durations_ms": [
+    270.08
+  ],
+  "duration_p50_ms": 270.08,
+  "duration_p95_ms": 270.08,
+  "duration_mean_ms": 270.08
+}

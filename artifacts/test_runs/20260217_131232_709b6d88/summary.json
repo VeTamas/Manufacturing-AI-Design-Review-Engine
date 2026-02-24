@@ -1,0 +1,104 @@
+{
+  "pass_count": 36,
+  "fail_count": 5,
+  "error_count": 0,
+  "failures": [
+    {
+      "case_id": "edge1_am",
+      "assertions": [
+        "primary=CNC not in ['AM']"
+      ],
+      "snapshot_diffs": [],
+      "reasons": [
+        "primary=CNC not in ['AM']"
+      ]
+    },
+    {
+      "case_id": "edge2_extrusion",
+      "assertions": [
+        "primary=MIM not in ['EXTRUSION']"
+      ],
+      "snapshot_diffs": [],
+      "reasons": [
+        "primary=MIM not in ['EXTRUSION']"
+      ]
+    },
+    {
+      "case_id": "extrusion2_bins_template",
+      "assertions": [
+        "primary=MIM not in ['EXTRUSION', 'CNC']"
+      ],
+      "snapshot_diffs": [],
+      "reasons": [
+        "primary=MIM not in ['EXTRUSION', 'CNC']"
+      ]
+    },
+    {
+      "case_id": "extrusion3_bins_template",
+      "assertions": [
+        "primary=MIM not in ['EXTRUSION', 'CNC']"
+      ],
+      "snapshot_diffs": [],
+      "reasons": [
+        "primary=MIM not in ['EXTRUSION', 'CNC']"
+      ]
+    },
+    {
+      "case_id": "sm2_bins_template",
+      "assertions": [
+        "primary=CNC not in ['SHEET_METAL']"
+      ],
+      "snapshot_diffs": [],
+      "reasons": [
+        "primary=CNC not in ['SHEET_METAL']"
+      ]
+    }
+  ],
+  "errors": [],
+  "durations_ms": [
+    225.46,
+    82.7,
+    86.4,
+    84.48,
+    87.48,
+    83.41,
+    84.38,
+    83.48,
+    85.32,
+    86.96,
+    84.3,
+    84.48,
+    86.43,
+    91.25,
+    88.41,
+    87.81,
+    89.44,
+    90.13,
+    91.03,
+    88.6,
+    87.75,
+    86.52,
+    86.46,
+    86.83,
+    85.42,
+    86.25,
+    85.85,
+    85.27,
+    86.04,
+    192.28,
+    83.34,
+    83.93,
+    88.93,
+    84.18,
+    84.71,
+    89.17,
+    86.46,
+    88.14,
+    85.36,
+    84.5,
+    84.93
+  ],
+  "duration_p50_ms": 86.4,
+  "duration_p95_ms": 91.25,
+  "duration_mean_ms": 92.3
+}

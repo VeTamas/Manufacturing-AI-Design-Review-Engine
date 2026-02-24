@@ -1,0 +1,18 @@
+Run started
+Inputs validated
+Process selection node entered
+process_selection: eligible_processes=['AM', 'CASTING', 'CNC', 'CNC_TURNING', 'EXTRUSION', 'FORGING', 'MIM', 'SHEET_METAL']
+process_selection: gated_out=[('INJECTION_MOLDING', 'polymer process'), ('THERMOFORMING', 'polymer process'), ('COMPRESSION_MOLDING', 'polymer process')]
+PSI: user_text_len=0 preview=""
+process_selection: cad_lite status=failed
+process_selection: sheet_metal_likelihood=low (source=none)
+process_selection: extrusion_likelihood=none (coeff_var=? axis=?)
+process_selection: scorer_path=legacy_bins cad_status=none
+PSI: score_diff=1 (primary=MIM=4, second=CNC=3)
+Process selection computed: primary=MIM user_selected=EXTRUSION
+process_selection: cad_uploaded=y evidence_available=n
+Process selection mismatch: user_selected=EXTRUSION but primary=MIM
+ruleset_used=extrusion
+Hybrid offer added: MIM + CNC finishing
+rules: cad_uploaded=y cad_status=none evidence_keys=[]
+report: process_recommendation present=True primary=MIM

@@ -1,0 +1,36 @@
+Run started
+Inputs validated
+Process selection node entered
+process_selection: gated_out process=INJECTION_MOLDING reason=polymer process
+process_selection: gated_out process=THERMOFORMING reason=polymer process
+process_selection: gated_out process=COMPRESSION_MOLDING reason=polymer process
+process_selection: eligible_processes=['AM', 'CASTING', 'CNC', 'CNC_TURNING', 'EXTRUSION', 'FORGING', 'MIM', 'SHEET_METAL']
+PSI: user_text_len=0 preview=""
+process_selection: scorer_path=legacy_bins cad_status=none
+PSI: score_diff=0 (primary=SHEET_METAL=5, second=CNC=5)
+Process selection computed: primary=SHEET_METAL user_selected=SHEET_METAL
+process_selection: cad_uploaded=n evidence_available=n
+rules: cad_uploaded=n cad_status=none evidence_keys=[]
+Generated explanation via openai
+explain: cache_hit=False key=f4d4aeff mode=bins provider=none
+explain: polished checklist grammar and formatting
+Agent decision: enrich via RAG
+RAG triggered: HIGH severity findings
+Entered rag_node (process=SHEET_METAL, top_k=5)
+RAG: rag_user_text_normalized=
+PSI debug: primary=SHEET_METAL, user_selected=SHEET_METAL, extrusion_offer=no, mim_offer=no, thermo_offer=no, comp_offer=no, am_offer=no, hybrid_offer=no, main_index_used=sheet_metal, offer_index_used=none, hybrid_primary_index_used=none, hybrid_secondary_index_used=none
+RAG: main_retrieve_index=sheet_metal, offer_retrieve_index=none
+RAG: main_index_used=sheet_metal
+RAG: retrieving from local sheet_metal index
+RAG: sources_breakdown main=5 offer=0 hybrid_primary=0 hybrid_secondary=0
+RAG completed: retrieved 5 snippets (main_index_used=sheet_metal)
+Explanation regenerated after RAG (via openai)
+explain: cache_hit=False key=fc89c73b mode=bins provider=none
+explain: polished checklist grammar and formatting
+Agent decision: accept (RAG already used; proceeding)
+self_review: confidence_base=0.7 source=deterministic
+self_review: cad_uploaded=n cad_status=none
+Performed self-critique and confidence scoring
+self_review: flag_adjustments=missing_cad-0.05, geometry_uncertain-0.02, no_numeric_tolerances-0.03
+self_review: adjusted_base=0.60 llm_delta=-0.04 final=0.56
+report: process_recommendation present=True primary=SHEET_METAL

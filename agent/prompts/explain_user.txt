@@ -1,0 +1,17 @@
+Job context:
+- Material: {material}
+- Production volume: {production_volume}
+- Load type: {load_type}
+- Tolerance criticality: {tolerance_criticality}
+
+EVIDENCE (use verbatim; do not invent):
+{evidence_block}
+
+{geometry_evidence_block}
+
+Base your rationale ONLY on the metrics above; do not invent geometry or dimensions.
+
+Findings:
+{findings_bullets}
+
+Please follow the output format exactly.
