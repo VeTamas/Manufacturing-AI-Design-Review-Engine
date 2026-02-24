@@ -31,6 +31,11 @@ AI is used only for explanation.
 
 This project focuses on reliable engineering decision support rather than generative AI workflows, targeting privacy-sensitive industrial environments where deterministic evaluation and offline capability are critical.
 
+Quick demo (2 minutes)
+pip install -r requirements.txt
+streamlit run app/streamlit_app.py
+Upload a STEP file → get deterministic DFM report.
+
 ---
 
 ## Core Philosophy
