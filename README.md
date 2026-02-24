@@ -322,15 +322,15 @@ Example processes: `cnc`, `sheet_metal`, `am`, `casting`, `forging`, etc.
 From repo root:
 
 ```powershell
-python scripts/build_kb_index.py
+python scripts/build_kb_index.py```
 
 ## Local embeddings (offline-friendly)
 
 Default mode is local embeddings. To force it explicitly:
 
-$env:EMBEDDING_MODE="local"
+```$env:EMBEDDING_MODE="local"
 $env:LOCAL_EMBED_MODEL="BAAI/bge-small-en-v1.5"
-python scripts/build_kb_index.py
+python scripts/build_kb_index.py```
 
 "Note: The first run may download the embedding model if it is not already cached.
 For fully air-gapped machines, you must provide the model files (HuggingFace cache or a prepacked model folder)."
@@ -350,10 +350,10 @@ data/outputs/kb_index/cnc/metadata.json
 
 ## How to Run Locally (Windows)
 
-    python -m venv .venv
+    ```python -m venv .venv
     .\.venv\Scripts\Activate.ps1
     pip install -r requirements.txt
-    streamlit run app/streamlit_app.py
+    streamlit run app/streamlit_app.py```
 
 ---
 
