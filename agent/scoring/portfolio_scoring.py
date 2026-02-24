@@ -1,13 +1,12 @@
-"""Simplified deterministic scoring for portfolio / public demo.
+"""Portfolio baseline scoring: table-driven, coverage-first.
 
-PORTFOLIO DEMO MODE:
-- This module implements a small set of simplified rules and weights for public release.
-- Results are deterministic and plausible but not equivalent to production heuristics.
-- Use PORTFOLIO_MODE=0 and the full logic in agent.nodes.process_selection for production.
+Uses only material_family, volume, tolerance_criticality, feature_variety,
+and optionally part_size / wall_thickness. Production heuristics are not included.
 """
 from __future__ import annotations
 
-# Same process tuple as process_selection for compatibility
+from agent.processes.gating import material_family
+
 CANDIDATES = (
     "CNC",
     "CNC_TURNING",
@@ -22,16 +21,215 @@ CANDIDATES = (
     "COMPRESSION_MOLDING",
 )
 
-# Simple weights (portfolio demo only; production uses detailed heuristics)
-WEIGHT_MATERIAL_CNC = 3
-WEIGHT_MATERIAL_IM = 3
-WEIGHT_VOLUME_PROTO_AM = 2
-WEIGHT_VOLUME_PROTO_CNC = 1
-WEIGHT_VOLUME_PROD_IM = 2
-WEIGHT_VOLUME_PROD_CASTING = 1
-WEIGHT_FEATURE_HIGH_AM = 1
-WEIGHT_TOLERANCE_HIGH_CNC = 1
-SECONDARY_DELTA = 2  # Max score gap for secondary (portfolio: simple tie-break)
+SECONDARY_DELTA = 2  # Max score gap for secondary (deterministic tie-break)
+
+# ---------------------------------------------------------------------------
+# Table-driven bonuses (0–3 per category). Transparent, coverage-first baseline.
+# ---------------------------------------------------------------------------
+# Material "unknown": neutral small values so coverage stays stable without biasing toward metal.
+PROCESS_RULES: dict[str, dict[str, dict[str, int]]] = {
+    "CNC": {
+        "material": {"metal": 3, "polymer": 1, "unknown": 1},
+        "volume": {"proto": 2, "small_batch": 1, "production": 0},
+        "tolerance": {"low": 0, "medium": 1, "high": 2},
+        "feature_variety": {"low": 1, "medium": 1, "high": 0},
+    },
+    "CNC_TURNING": {
+        "material": {"metal": 2, "polymer": 0, "unknown": 1},
+        "volume": {"proto": 2, "small_batch": 1, "production": 0},
+        "tolerance": {"low": 0, "medium": 1, "high": 2},
+        "feature_variety": {"low": 2, "medium": 1, "high": 0},
+    },
+    "AM": {
+        "material": {"metal": 1, "polymer": 2, "unknown": 1},
+        "volume": {"proto": 3, "small_batch": 2, "production": 0},
+        "tolerance": {"low": 1, "medium": 0, "high": 0},
+        "feature_variety": {"low": 0, "medium": 1, "high": 2},
+    },
+    "SHEET_METAL": {
+        "material": {"metal": 2, "polymer": 0, "unknown": 0},
+        # proto=1 so sheet metal can appear plausibly in proto scenarios (minimal balance vs CNC/AM).
+        "volume": {"proto": 1, "small_batch": 1, "production": 2},
+        "tolerance": {"low": 2, "medium": 1, "high": 0},
+        "feature_variety": {"low": 2, "medium": 1, "high": 0},
+    },
+    "INJECTION_MOLDING": {
+        "material": {"metal": 0, "polymer": 3, "unknown": 1},
+        "volume": {"proto": 0, "small_batch": 0, "production": 3},
+        "tolerance": {"low": 1, "medium": 1, "high": 0},
+        "feature_variety": {"low": 2, "medium": 1, "high": 0},
+    },
+    "CASTING": {
+        "material": {"metal": 2, "polymer": 0, "unknown": 1},
+        "volume": {"proto": 0, "small_batch": 1, "production": 2},
+        "tolerance": {"low": 1, "medium": 1, "high": 0},
+        "feature_variety": {"low": 1, "medium": 1, "high": 0},
+    },
+    "FORGING": {
+        "material": {"metal": 2, "polymer": 0, "unknown": 1},
+        "volume": {"proto": 0, "small_batch": 0, "production": 2},
+        "tolerance": {"low": 1, "medium": 1, "high": 0},
+        "feature_variety": {"low": 2, "medium": 1, "high": 0},
+    },
+    "EXTRUSION": {
+        "material": {"metal": 2, "polymer": 1, "unknown": 1},
+        "volume": {"proto": 0, "small_batch": 1, "production": 2},
+        "tolerance": {"low": 1, "medium": 1, "high": 0},
+        "feature_variety": {"low": 2, "medium": 1, "high": 0},
+    },
+    "MIM": {
+        "material": {"metal": 2, "polymer": 0, "unknown": 1},
+        "volume": {"proto": 0, "small_batch": 0, "production": 2},
+        "tolerance": {"low": 1, "medium": 1, "high": 0},
+        "feature_variety": {"low": 0, "medium": 1, "high": 2},
+    },
+    "THERMOFORMING": {
+        "material": {"metal": 0, "polymer": 2, "unknown": 1},
+        "volume": {"proto": 0, "small_batch": 0, "production": 2},
+        "tolerance": {"low": 1, "medium": 1, "high": 0},
+        "feature_variety": {"low": 2, "medium": 1, "high": 0},
+    },
+    "COMPRESSION_MOLDING": {
+        "material": {"metal": 0, "polymer": 2, "unknown": 1},
+        "volume": {"proto": 0, "small_batch": 0, "production": 2},
+        "tolerance": {"low": 1, "medium": 1, "high": 0},
+        "feature_variety": {"low": 2, "medium": 1, "high": 0},
+    },
+}
+
+
+def _norm_volume(production_volume: str) -> str:
+    """Map to proto | small_batch | production."""
+    v = (production_volume or "").strip().lower()
+    if v in ("proto",):
+        return "proto"
+    if v in ("small batch", "small_batch"):
+        return "small_batch"
+    if v in ("production",):
+        return "production"
+    return "small_batch"
+
+
+def _norm_tolerance(tolerance_criticality: str) -> str:
+    """Map to low | medium | high."""
+    t = (tolerance_criticality or "").strip().lower()
+    if t in ("low",):
+        return "low"
+    if t in ("high",):
+        return "high"
+    return "medium"
+
+
+def _norm_feature_variety(feature_variety: str) -> str:
+    """Map to low | medium | high."""
+    fv = (feature_variety or "").strip().lower()
+    if fv in ("low",):
+        return "low"
+    if fv in ("high",):
+        return "high"
+    return "medium"
+
+
+def _norm_size(part_size: str) -> str:
+    """Map to small | medium | large."""
+    s = (part_size or "").strip().lower()
+    if s in ("small",):
+        return "small"
+    if s in ("large",):
+        return "large"
+    return "medium"
+
+
+def _norm_wall(min_wall_thickness: str) -> str:
+    """Map to thin | medium | thick."""
+    w = (min_wall_thickness or "").strip().lower()
+    if w in ("thin",):
+        return "thin"
+    if w in ("thick",):
+        return "thick"
+    return "medium"
+
+
+def _score_from_table(
+    process: str,
+    mat_family: str,
+    volume: str,
+    tolerance: str,
+    feature_variety: str,
+) -> tuple[int, list[dict]]:
+    """Sum table bonuses for one process. Returns (score, breakdown_entries)."""
+    rules = PROCESS_RULES.get(process)
+    if not rules:
+        return 0, []
+
+    entries: list[dict] = []
+    total = 0
+
+    mat_r = rules.get("material") or {}
+    delta = mat_r.get(mat_family, mat_r.get("unknown", 0))
+    if delta:
+        total += delta
+        entries.append({"delta": delta, "reason": f"Material family ({mat_family})", "rule_id": "PORT_MAT", "severity": "info"})
+
+    vol_r = rules.get("volume") or {}
+    delta = vol_r.get(volume, 0)
+    if delta:
+        total += delta
+        entries.append({"delta": delta, "reason": f"Volume ({volume})", "rule_id": "PORT_VOL", "severity": "info"})
+
+    tol_r = rules.get("tolerance") or {}
+    delta = tol_r.get(tolerance, 0)
+    if delta:
+        total += delta
+        entries.append({"delta": delta, "reason": f"Tolerance ({tolerance})", "rule_id": "PORT_TOL", "severity": "info"})
+
+    fv_r = rules.get("feature_variety") or {}
+    delta = fv_r.get(feature_variety, 0)
+    if delta:
+        total += delta
+        entries.append({"delta": delta, "reason": f"Feature variety ({feature_variety})", "rule_id": "PORT_FV", "severity": "info"})
+
+    return total, entries
+
+
+def _plausibility_bonuses(
+    process: str,
+    mat_family: str,
+    volume: str,
+    tolerance: str,
+    feature_variety: str,
+    size_class: str,
+    eligible_processes: list[str],
+) -> tuple[int, str | None]:
+    """
+    Minimal plausibility rules: small +1 or +2 only.
+    Returns (delta, reason_or_none).
+    """
+    if process not in eligible_processes:
+        return 0, None
+
+    # Sheet metal: metal + low/med tolerance + low/med feature variety (+ optional medium/large size)
+    if process == "SHEET_METAL" and mat_family == "metal":
+        if tolerance in ("low", "medium") and feature_variety in ("low", "medium"):
+            if size_class in ("medium", "large"):
+                return 2, "Metal, moderate tolerance and variety, medium/large size favor sheet metal"
+            return 1, "Metal, moderate tolerance and variety favor sheet metal"
+
+    # Extrusion: metal + low feature variety (+ optional medium/large size)
+    if process == "EXTRUSION" and mat_family == "metal":
+        if feature_variety == "low":
+            if size_class in ("medium", "large"):
+                return 2, "Metal, low feature variety, medium/large size favor extrusion"
+            return 1, "Metal, low feature variety favor extrusion"
+
+    # Injection molding / thermoforming / compression: polymer + production (+ optional size)
+    if process in ("INJECTION_MOLDING", "THERMOFORMING", "COMPRESSION_MOLDING") and mat_family == "polymer":
+        if volume == "production":
+            if size_class in ("medium", "large"):
+                return 2, "Polymer, production volume, medium/large size favor forming/molding"
+            return 1, "Polymer, production volume favor forming/molding"
+
+    return 0, None
 
 
 def _portfolio_scores(
@@ -40,112 +238,64 @@ def _portfolio_scores(
     part_size: str,
     feature_variety: str,
     tolerance_criticality: str,
+    min_wall_thickness: str,
     user_process_raw: str,
     eligible_processes: list[str],
     user_text: str = "",
 ) -> tuple[dict[str, int], dict[str, list[dict]], list[str]]:
     """
-    Compute scores and breakdown for eligible processes only.
-    Returns (scores, score_breakdown, all_reasons).
+    Table-driven score + minimal plausibility. Returns (scores, score_breakdown, all_reasons).
     """
+    mat_family = material_family(material)
+    # Keep "unknown" as-is; PROCESS_RULES has neutral "unknown" entries so we do not bias toward metal.
+    volume = _norm_volume(production_volume)
+    tolerance = _norm_tolerance(tolerance_criticality)
+    fv = _norm_feature_variety(feature_variety)
+    size_class = _norm_size(part_size)
+    wall_class = _norm_wall(min_wall_thickness)
+
     scores: dict[str, int] = {p: 0 for p in CANDIDATES}
     score_breakdown: dict[str, list[dict]] = {p: [] for p in CANDIDATES}
     reasons: list[str] = []
-    text = (user_text or "").lower()
 
-    # ----- Material base (simplified) -----
-    if material in ("Steel", "Aluminum", "Stainless Steel", "Titanium"):
-        if "CNC" in eligible_processes:
-            scores["CNC"] = WEIGHT_MATERIAL_CNC
-            score_breakdown["CNC"].append({"delta": WEIGHT_MATERIAL_CNC, "reason": "Metal material favors CNC", "rule_id": "PORT_CNC_METAL", "severity": "info"})
-            reasons.append("Metal material favors CNC")
-        if "CASTING" in eligible_processes:
-            scores["CASTING"] = 1
-            score_breakdown["CASTING"].append({"delta": 1, "reason": "Metal allows casting", "rule_id": "PORT_CAST_METAL", "severity": "info"})
-        if "FORGING" in eligible_processes:
-            scores["FORGING"] = 1
-            score_breakdown["FORGING"].append({"delta": 1, "reason": "Metal allows forging", "rule_id": "PORT_FORG_METAL", "severity": "info"})
-        if "SHEET_METAL" in eligible_processes:
-            scores["SHEET_METAL"] = 1
-            score_breakdown["SHEET_METAL"].append({"delta": 1, "reason": "Metal allows sheet metal", "rule_id": "PORT_SM_METAL", "severity": "info"})
-        if "MIM" in eligible_processes:
-            scores["MIM"] = 0  # No base; keyword or volume can add
-        if "EXTRUSION" in eligible_processes and material in ("Aluminum", "Stainless Steel"):
-            scores["EXTRUSION"] = 1
-            score_breakdown["EXTRUSION"].append({"delta": 1, "reason": "Aluminum/stainless favor extrusion", "rule_id": "PORT_EXTR_AL", "severity": "info"})
-    elif material == "Plastic":
-        if "INJECTION_MOLDING" in eligible_processes:
-            scores["INJECTION_MOLDING"] = WEIGHT_MATERIAL_IM
-            score_breakdown["INJECTION_MOLDING"].append({"delta": WEIGHT_MATERIAL_IM, "reason": "Plastic material favors injection molding", "rule_id": "PORT_IM_PLASTIC", "severity": "info"})
-            reasons.append("Plastic material favors injection molding")
-        if "AM" in eligible_processes:
-            scores["AM"] = 1
-            score_breakdown["AM"].append({"delta": 1, "reason": "Plastic allows AM", "rule_id": "PORT_AM_PLASTIC", "severity": "info"})
-        if "CNC" in eligible_processes:
-            scores["CNC"] = 1
-            score_breakdown["CNC"].append({"delta": 1, "reason": "Plastic allows CNC", "rule_id": "PORT_CNC_PLASTIC", "severity": "info"})
-        if "THERMOFORMING" in eligible_processes:
-            scores["THERMOFORMING"] = 1
-            score_breakdown["THERMOFORMING"].append({"delta": 1, "reason": "Plastic allows thermoforming", "rule_id": "PORT_THERM_PLASTIC", "severity": "info"})
-        if "COMPRESSION_MOLDING" in eligible_processes:
-            scores["COMPRESSION_MOLDING"] = 0
+    for process in eligible_processes:
+        base, entries = _score_from_table(process, mat_family, volume, tolerance, fv)
+        scores[process] = base
+        score_breakdown[process] = list(entries)
+        for e in entries:
+            if e.get("reason"):
+                reasons.append(e["reason"])
 
-    # ----- Volume (simplified) -----
-    if production_volume in ("Proto", "Small batch"):
-        if "CNC" in eligible_processes:
-            scores["CNC"] = scores.get("CNC", 0) + WEIGHT_VOLUME_PROTO_CNC
-            score_breakdown["CNC"].append({"delta": WEIGHT_VOLUME_PROTO_CNC, "reason": "Low volume favors CNC flexibility", "rule_id": "PORT_VOL_CNC", "severity": "info"})
-            reasons.append("Low volume favors CNC flexibility")
-        if "AM" in eligible_processes:
-            scores["AM"] = scores.get("AM", 0) + WEIGHT_VOLUME_PROTO_AM
-            score_breakdown["AM"].append({"delta": WEIGHT_VOLUME_PROTO_AM, "reason": "Proto/small batch favors AM", "rule_id": "PORT_VOL_AM", "severity": "info"})
-            reasons.append("Proto/small batch favors AM")
-        if "INJECTION_MOLDING" in eligible_processes:
-            scores["INJECTION_MOLDING"] = scores.get("INJECTION_MOLDING", 0) - 2
-            score_breakdown["INJECTION_MOLDING"].append({"delta": -2, "reason": "Low volume tooling risk (IM)", "rule_id": "PORT_IM_LOWVOL", "severity": "med"})
-        if "MIM" in eligible_processes:
-            scores["MIM"] = scores.get("MIM", 0) - 2
-            score_breakdown["MIM"].append({"delta": -2, "reason": "Low volume tooling risk (MIM)", "rule_id": "PORT_MIM_LOWVOL", "severity": "med"})
-    elif production_volume == "Production":
-        if "INJECTION_MOLDING" in eligible_processes:
-            scores["INJECTION_MOLDING"] = scores.get("INJECTION_MOLDING", 0) + WEIGHT_VOLUME_PROD_IM
-            score_breakdown["INJECTION_MOLDING"].append({"delta": WEIGHT_VOLUME_PROD_IM, "reason": "Production volume favors IM economics", "rule_id": "PORT_IM_PROD", "severity": "info"})
-        if "CASTING" in eligible_processes:
-            scores["CASTING"] = scores.get("CASTING", 0) + WEIGHT_VOLUME_PROD_CASTING
-            score_breakdown["CASTING"].append({"delta": WEIGHT_VOLUME_PROD_CASTING, "reason": "Production volume favors casting", "rule_id": "PORT_CAST_PROD", "severity": "info"})
-        if "MIM" in eligible_processes:
-            scores["MIM"] = scores.get("MIM", 0) + 1
-            score_breakdown["MIM"].append({"delta": 1, "reason": "Production volume favors MIM", "rule_id": "PORT_MIM_PROD", "severity": "info"})
+        delta, reason = _plausibility_bonuses(
+            process, mat_family, volume, tolerance, fv, size_class, eligible_processes
+        )
+        if delta and reason:
+            scores[process] = scores.get(process, 0) + delta
+            score_breakdown[process].append({"delta": delta, "reason": reason, "rule_id": "PORT_PLAUS", "severity": "info"})
+            reasons.append(reason)
 
-    # ----- Geometry (minimal) -----
-    if feature_variety == "High" and "AM" in eligible_processes:
-        scores["AM"] = scores.get("AM", 0) + WEIGHT_FEATURE_HIGH_AM
-        score_breakdown["AM"].append({"delta": WEIGHT_FEATURE_HIGH_AM, "reason": "High feature variety favors AM", "rule_id": "PORT_AM_FEATURE", "severity": "info"})
-    if tolerance_criticality == "High" and "CNC" in eligible_processes:
-        scores["CNC"] = scores.get("CNC", 0) + WEIGHT_TOLERANCE_HIGH_CNC
-        score_breakdown["CNC"].append({"delta": WEIGHT_TOLERANCE_HIGH_CNC, "reason": "Tight tolerances favor CNC", "rule_id": "PORT_CNC_TOL", "severity": "info"})
-
-    # ----- User selection (simple bias when not AUTO) -----
+    # User selection bias (when not AUTO)
     user_process = None if user_process_raw == "AUTO" else user_process_raw
     if user_process and user_process in eligible_processes:
         scores[user_process] = scores.get(user_process, 0) + 1
         score_breakdown[user_process].append({"delta": 1, "reason": "User-selected process bias", "rule_id": "PORT_USER", "severity": "info"})
+        reasons.append("User-selected process bias")
 
-    # ----- One simple keyword check for demo plausibility -----
+    # Optional: one simple keyword nudge for demo plausibility (keep minimal)
+    text = (user_text or "").lower()
     if "extrusion" in text or "profile" in text:
         if "EXTRUSION" in eligible_processes:
-            scores["EXTRUSION"] = scores.get("EXTRUSION", 0) + 2
-            score_breakdown["EXTRUSION"].append({"delta": 2, "reason": "Description suggests extrusion", "rule_id": "PORT_KW_EXTR", "severity": "info"})
+            scores["EXTRUSION"] = scores.get("EXTRUSION", 0) + 1
+            score_breakdown["EXTRUSION"].append({"delta": 1, "reason": "Description suggests extrusion", "rule_id": "PORT_KW", "severity": "info"})
     if "sheet metal" in text or "bend" in text:
         if "SHEET_METAL" in eligible_processes:
-            scores["SHEET_METAL"] = scores.get("SHEET_METAL", 0) + 2
-            score_breakdown["SHEET_METAL"].append({"delta": 2, "reason": "Description suggests sheet metal", "rule_id": "PORT_KW_SM", "severity": "info"})
+            scores["SHEET_METAL"] = scores.get("SHEET_METAL", 0) + 1
+            score_breakdown["SHEET_METAL"].append({"delta": 1, "reason": "Description suggests sheet metal", "rule_id": "PORT_KW", "severity": "info"})
     if "additive" in text or "3d print" in text:
         if "AM" in eligible_processes:
-            scores["AM"] = scores.get("AM", 0) + 2
-            score_breakdown["AM"].append({"delta": 2, "reason": "Description suggests additive", "rule_id": "PORT_KW_AM", "severity": "info"})
+            scores["AM"] = scores.get("AM", 0) + 1
+            score_breakdown["AM"].append({"delta": 1, "reason": "Description suggests additive", "rule_id": "PORT_KW", "severity": "info"})
 
-    # Ineligible processes stay at 0 (gating already applied by caller)
     for p in CANDIDATES:
         if p not in eligible_processes:
             scores[p] = 0
@@ -158,10 +308,7 @@ def _portfolio_tiebreak(
     eligible_processes: list[str],
     user_process_raw: str,
 ) -> tuple[str, list[str], list[str]]:
-    """
-    Simple deterministic tie-break: primary = max score, secondary = next within SECONDARY_DELTA.
-    Returns (primary, secondary, not_recommended).
-    """
+    """Deterministic: primary = max score; secondary = next within SECONDARY_DELTA."""
     user_process = None if user_process_raw == "AUTO" else user_process_raw
     sorted_by_score = sorted(
         eligible_processes,
@@ -183,9 +330,7 @@ def _portfolio_tiebreak(
     not_recommended: list[str] = []
     excluded = {primary} | set(secondary)
     for p in eligible_processes:
-        if p in excluded:
-            continue
-        if user_process and p == user_process:
+        if p in excluded or (user_process and p == user_process):
             continue
         sp = scores.get(p, 0)
         if sp <= 0 or (primary_score - sp) >= 4:
@@ -207,8 +352,7 @@ def compute_portfolio_recommendation(
     user_text: str = "",
 ) -> dict:
     """
-    Compute full process_recommendation dict using portfolio demo scoring.
-    Same shape as production process_recommendation for drop-in use.
+    Portfolio baseline scoring. Same output shape as process_recommendation for drop-in use.
     """
     scores, score_breakdown, all_reasons = _portfolio_scores(
         material=material,
@@ -216,6 +360,7 @@ def compute_portfolio_recommendation(
         part_size=part_size,
         feature_variety=feature_variety,
         tolerance_criticality=tolerance_criticality,
+        min_wall_thickness=min_wall_thickness,
         user_process_raw=user_process_raw,
         eligible_processes=eligible_processes,
         user_text=user_text,
@@ -242,7 +387,6 @@ def compute_portfolio_recommendation(
         "Volume sensitivity: IM and sheet metal favor production runs; CNC/AM suit proto and small batch.",
     ]
 
-    # Normalize secondary: remove primary if present
     secondary_normalized = [p for p in secondary if p != primary]
 
     return {
@@ -257,5 +401,6 @@ def compute_portfolio_recommendation(
         "score_breakdown": score_breakdown,
         "process_gates": gates,
         "eligible_processes": eligible_processes,
-        "user_selected": user_process_raw,
+        # None when process=AUTO so UI/trace do not imply user explicitly chose "AUTO" as a process.
+        "user_selected": None if user_process_raw == "AUTO" else user_process_raw,
     }

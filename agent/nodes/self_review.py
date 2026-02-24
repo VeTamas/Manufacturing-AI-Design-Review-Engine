@@ -288,11 +288,11 @@ def _base_confidence_score(state: GraphState) -> float:
         if conf_inputs and hasattr(conf_inputs, "step_scale_confirmed") and conf_inputs.step_scale_confirmed is False:
             score -= 0.03
     
-    # Process mismatch penalty
+    # Process mismatch penalty (only when user explicitly chose a process that differs from primary; AUTO is not a selection)
     if inputs and proc_rec:
         user_selected = getattr(inputs, "process", None)
         primary = proc_rec.get("primary")
-        if user_selected and primary and user_selected != primary:
+        if user_selected and user_selected != "AUTO" and primary and user_selected != primary:
             score -= 0.08
     
     # Findings penalties
@@ -435,10 +435,10 @@ def _generate_deterministic_confidence_texts(state: GraphState) -> dict[str, lis
     # Prioritize PSI1 if present
     psi1_finding = next((f for f in med_findings if getattr(f, "id", "") == "PSI1"), None)
     if psi1_finding:
-        # Generate PSI1-specific bullet
+        # Generate PSI1-specific bullet (AUTO = no explicit selection, so no mismatch wording)
         user_selected = getattr(inputs, "process", None) if inputs else None
         primary = proc_rec.get("primary")
-        if user_selected and primary and user_selected != primary:
+        if user_selected and user_selected != "AUTO" and primary and user_selected != primary:
             # Format: "Process mismatch tradeoffs (X vs Y) need validation (PSI1)."
             med_conf.append(f"Process mismatch tradeoffs ({user_selected} vs {primary}) need validation (PSI1).")
         else:
@@ -482,12 +482,12 @@ def _generate_deterministic_confidence_texts(state: GraphState) -> dict[str, lis
         # Only add if some fields are unknown (uncertainty), not if completely missing
         low_conf.append("Geometry analysis based on summary bins; feature-level detail uncertain.")
     
-    # Uncertainty about economics (if process mismatch exists but not severe)
+    # Uncertainty about economics (if process mismatch exists but not severe; AUTO is not a selection)
     if inputs and proc_rec:
         user_selected = getattr(inputs, "process", None)
         primary = proc_rec.get("primary")
         scores = proc_rec.get("scores", {})
-        if user_selected and primary and user_selected != primary:
+        if user_selected and user_selected != "AUTO" and primary and user_selected != primary:
             score_diff = scores.get(primary, 0) - scores.get(user_selected, 0)
             if 0 < score_diff < 3:  # Small mismatch - economic uncertainty
                 low_conf.append("Process economics tradeoffs require volume and tooling validation.")

@@ -268,7 +268,7 @@ def report_node(state: GraphState) -> dict:
         primary = proc_rec.get("primary")
         
         if process == "AUTO" and primary:
-            md.append(f"- Manufacturing process: AUTO\n")
+            md.append(f"- Manufacturing process: No specific selection (geometry-driven)\n")
             md.append(f"- Recommended process: {primary}\n")
         else:
             md.append(f"- Manufacturing process: {process}\n")
@@ -636,7 +636,7 @@ def report_node(state: GraphState) -> dict:
         prioritized_actions.extend(high_finding_actions)
         
         # 2. Process mismatch decision step (if applicable) - add before other actions
-        if has_process_mismatch and primary_is_am and user_selected != "AM":
+        if has_process_mismatch and primary_is_am and user_selected and user_selected != "AUTO" and user_selected != "AM":
             decision_step = "Confirm if AM-only geometry (internal channels/lattice/conformal cooling) is truly required; otherwise CNC is simpler."
             # Check if similar decision step already exists
             has_similar_decision = any(

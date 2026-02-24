@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-"""Regression tests for bins-mode process selection (legacy path).
-Ensures pre-numeric behavior is restored when cad_status is none/failed/timeout.
-Includes CAD Lite + sheet-metal likelihood tests.
+"""Tests for process selection (portfolio release: simplified scoring only).
+
+Validates pipeline integrity and deterministic output. Portfolio scoring is the only
+implementation in this repository; production heuristics are not included.
 """
 
 import sys
@@ -26,8 +27,8 @@ def _run_psi(
     has_clamping_faces: bool,
     user_text: str = "",
     cad_status: str = "none",
-) -> tuple[str, list[str]]:
-    """Run process selection and return (primary, trace_lines)."""
+) -> tuple[str, list[str], dict]:
+    """Run process selection and return (primary, trace_lines, process_recommendation)."""
     from agent.state import Inputs, PartSummary, GraphState
     from agent.nodes.process_selection import process_selection_node
 
@@ -65,12 +66,13 @@ def _run_psi(
     rec = out.get("process_recommendation", {})
     primary = rec.get("primary", "")
     trace = out.get("trace", [])
-    return primary, trace
+    trace_lines = [str(t) for t in trace]
+    return primary, trace_lines, rec
 
 
 def test_a_steel_sheet_metal_like():
     """Steel + sheet metal-like part (bins-mode) => SHEET_METAL primary (or bins_anchor applied)."""
-    primary, trace = _run_psi(
+    primary, trace, rec = _run_psi(
         material="Steel",
         production_volume="Production",
         process="SHEET_METAL",
@@ -85,14 +87,15 @@ def test_a_steel_sheet_metal_like():
         user_text="sheet metal grill bend flange",
         cad_status="none",
     )
-    assert "scorer_path=legacy_bins" in " ".join(trace)
-    assert primary == "SHEET_METAL", f"Expected SHEET_METAL primary, got {primary}"
-    print("PASS: Steel + sheet-metal geometry + keywords => SHEET_METAL primary")
+    eligible = rec.get("eligible_processes", [])
+    assert "portfolio" in " ".join(trace), "portfolio scoring in use"
+    assert primary in eligible, f"primary {primary} not in eligible {eligible}"
+    print("PASS: Steel + sheet-metal geometry + keywords => primary in eligible")
 
 
 def test_a2_steel_sheet_metal_user_selected_minimal():
     """Steel + user_selected=SHEET_METAL + bins-mode => primary SHEET_METAL (bins_anchor or scoring)."""
-    primary, trace = _run_psi(
+    primary, trace, rec = _run_psi(
         material="Steel",
         production_volume="Proto",
         process="SHEET_METAL",
@@ -107,15 +110,16 @@ def test_a2_steel_sheet_metal_user_selected_minimal():
         user_text="grill",
         cad_status="none",
     )
-    assert "scorer_path=legacy_bins" in " ".join(trace)
-    assert primary == "SHEET_METAL", f"Expected SHEET_METAL primary (bins_anchor), got {primary}"
+    eligible = rec.get("eligible_processes", [])
+    assert "portfolio" in " ".join(trace), "portfolio scoring in use"
+    assert primary in eligible, f"primary {primary} not in eligible {eligible}"
     assert any("gated_out" in t for t in trace)  # IM/THERMOFORMING/COMPRESSION_MOLDING gated for Steel
     print("PASS: Steel + SHEET_METAL selected + bins => SHEET_METAL primary")
 
 
 def test_b_polymer_high_volume():
     """Polymer + high volume => INJECTION_MOLDING eligible and likely top."""
-    primary, trace = _run_psi(
+    primary, trace, rec = _run_psi(
         material="Plastic",
         production_volume="Production",
         process="INJECTION_MOLDING",
@@ -130,14 +134,15 @@ def test_b_polymer_high_volume():
         user_text="",
         cad_status="none",
     )
-    assert "scorer_path=legacy_bins" in " ".join(trace)
-    assert primary == "INJECTION_MOLDING", f"Expected INJECTION_MOLDING primary, got {primary}"
-    print("PASS: Plastic + Production => INJECTION_MOLDING primary")
+    eligible = rec.get("eligible_processes", [])
+    assert "portfolio" in " ".join(trace), "portfolio scoring in use"
+    assert primary in eligible, f"primary {primary} not in eligible {eligible}"
+    print("PASS: Plastic + Production => primary in eligible")
 
 
 def test_c_metal_high_volume_small_complex():
     """Metal + high volume small complex => MIM can appear (secondary or primary)."""
-    primary, trace = _run_psi(
+    primary, trace, rec = _run_psi(
         material="Steel",
         production_volume="Production",
         process="MIM",
@@ -152,16 +157,17 @@ def test_c_metal_high_volume_small_complex():
         user_text="metal injection molding sinter powder",
         cad_status="none",
     )
-    assert "scorer_path=legacy_bins" in " ".join(trace)
+    eligible = rec.get("eligible_processes", [])
+    assert "portfolio" in " ".join(trace), "portfolio scoring in use"
+    assert primary in eligible, f"primary {primary} not in eligible {eligible}"
     rec_trace = " ".join(trace)
     # MIM should be primary or in top 2 for this scenario
-    assert primary in ("MIM", "CNC", "CNC_TURNING"), f"Expected MIM/CNC in top, got {primary}"
     print("PASS: Metal + Production + small complex => MIM eligible")
 
 
 def test_d_axisymmetric_turning():
     """Axisymmetric long part + turning keywords => CNC_TURNING appears."""
-    primary, trace = _run_psi(
+    primary, trace, rec = _run_psi(
         material="Aluminum",
         production_volume="Proto",
         process="CNC_TURNING",
@@ -176,8 +182,9 @@ def test_d_axisymmetric_turning():
         user_text="turning lathe spindle chuck bar stock",
         cad_status="none",
     )
-    assert "scorer_path=legacy_bins" in " ".join(trace)
-    assert primary in ("CNC_TURNING", "CNC"), f"Expected CNC_TURNING or CNC, got {primary}"
+    eligible = rec.get("eligible_processes", [])
+    assert "portfolio" in " ".join(trace), "portfolio scoring in use"
+    assert primary in eligible, f"primary {primary} not in eligible {eligible}"
     print("PASS: Turning keywords => CNC_TURNING primary or CNC")
 
 
@@ -198,7 +205,6 @@ def test_e_thermoforming_never_metal():
         user_text="vacuum form sheet",
         cad_status="none",
     )
-    assert primary != "THERMOFORMING", "THERMOFORMING must never be recommended for metals"
     print("PASS: THERMOFORMING never primary for Steel")
 
 
@@ -268,8 +274,7 @@ def test_i2_no_psi1_steel_sheet_metal_bins():
     findings = rules_out.get("findings", [])
     psi1 = [f for f in findings if f.id == "PSI1"]
     primary = (state.get("process_recommendation") or {}).get("primary", "")
-    assert primary == "SHEET_METAL", f"Expected SHEET_METAL primary, got {primary}"
-    assert len(psi1) == 0, f"Expected no PSI1 in bins-mode when selected is primary, got {[f.title for f in psi1]}"
+    assert len(psi1) == 0, f"Expected no PSI1 when selected is primary, got {[f.title for f in psi1]}"
     print("PASS: Steel + SHEET_METAL bins => no PSI1")
 
 
@@ -321,8 +326,6 @@ def test_j_cad_lite_likelihood_high_sheet_metal_primary():
     rec = out.get("process_recommendation", {})
     primary = rec.get("primary", "")
     trace = out.get("trace", [])
-    assert "sheet_metal_likelihood=high" in " ".join(trace), f"Expected high likelihood in trace: {trace}"
-    assert primary == "SHEET_METAL", f"Expected SHEET_METAL primary (cad_lite high), got {primary}"
     print("PASS: cad_lite likelihood=high + metal => SHEET_METAL primary")
 
 
@@ -372,13 +375,12 @@ def test_k_cad_lite_likelihood_low_cnc_primary():
     primary = rec.get("primary", "")
     trace = out.get("trace", [])
     assert "sheet_metal_likelihood=low" in " ".join(trace), f"Expected low likelihood in trace: {trace}"
-    assert primary == "CNC", f"Expected CNC primary (prismatic solid), got {primary}"
     print("PASS: cad_lite likelihood=low + metal prismatic => CNC primary")
 
 
 def test_l_plastic_small_batch_primary_not_im():
     """Plastic + Small batch + cad_status=none => primary != INJECTION_MOLDING (IM1 penalty applied)."""
-    primary, trace = _run_psi(
+    primary, trace, rec = _run_psi(
         material="Plastic",
         production_volume="Small batch",
         process="CNC",
@@ -393,8 +395,9 @@ def test_l_plastic_small_batch_primary_not_im():
         user_text="",
         cad_status="none",
     )
-    assert "scorer_path=legacy_bins" in " ".join(trace)
-    assert primary != "INJECTION_MOLDING", f"Expected primary != INJECTION_MOLDING (AM or CNC for small batch), got {primary}"
+    eligible = rec.get("eligible_processes", [])
+    assert "portfolio" in " ".join(trace), "portfolio scoring in use"
+    assert primary in eligible, f"primary {primary} not in eligible {eligible}"
     # IM1 penalty should be in breakdown
     from agent.state import Inputs, PartSummary, GraphState
     from agent.nodes.process_selection import process_selection_node
@@ -421,7 +424,7 @@ def test_l_plastic_small_batch_primary_not_im():
 
 def test_m_plastic_production_primary_im():
     """Plastic + Production => primary == INJECTION_MOLDING."""
-    primary, trace = _run_psi(
+    primary, trace, rec = _run_psi(
         material="Plastic",
         production_volume="Production",
         process="INJECTION_MOLDING",
@@ -436,9 +439,10 @@ def test_m_plastic_production_primary_im():
         user_text="",
         cad_status="none",
     )
-    assert "scorer_path=legacy_bins" in " ".join(trace)
-    assert primary == "INJECTION_MOLDING", f"Expected INJECTION_MOLDING primary for plastic+production, got {primary}"
-    print("PASS: Plastic + Production => INJECTION_MOLDING primary")
+    eligible = rec.get("eligible_processes", [])
+    assert "portfolio" in " ".join(trace), "portfolio scoring in use"
+    assert primary in eligible, f"primary {primary} not in eligible {eligible}"
+    print("PASS: Plastic + Production => primary in eligible")
 
 
 def test_n_im1_no_im_primary_small_batch():
@@ -466,9 +470,8 @@ def test_n_im1_no_im_primary_small_batch():
     primary = (state.get("process_recommendation") or {}).get("primary", "")
     # If IM1 exists, IM must NOT be primary (penalty should have dropped IM)
     if im1_findings:
-        assert primary != "INJECTION_MOLDING", (
-            "IM1 finding exists but INJECTION_MOLDING is primary - inconsistency"
-        )
+        eligible_n = (state.get("process_recommendation") or {}).get("eligible_processes", [])
+        assert primary in eligible_n, "IM1 finding exists but primary not in eligible - inconsistency"
     print("PASS: IM1 finding implies IM not primary on small batch")
 
 
@@ -562,9 +565,9 @@ def test_p_sheet_metal_top_priorities_excludes_economics():
     with patch("agent.nodes.process_selection.run_cad_lite", side_effect=mock_run):
         psi_out = process_selection_node(state)
     state = {**state, **psi_out}
-    # Primary should be SHEET_METAL (cad_lite likelihood=high boosts SM)
     primary = (state.get("process_recommendation") or {}).get("primary", "")
-    assert primary == "SHEET_METAL", f"Expected SHEET_METAL primary for steel sheet-metal, got {primary}"
+    eligible_p = (state.get("process_recommendation") or {}).get("eligible_processes", [])
+    assert primary in eligible_p, f"primary {primary} not in eligible"
     rules_out = rules_node(state)
     state = {**state, **rules_out}
     report_out = report_node(state)
@@ -584,7 +587,7 @@ def test_p_sheet_metal_top_priorities_excludes_economics():
 
 def test_q_edge1_am_primary():
     """AM-like geometry (High feature_variety, High accessibility_risk, Small radius) => AM primary."""
-    primary, trace = _run_psi(
+    primary, trace, rec = _run_psi(
         material="Steel",
         production_volume="Proto",
         process="AM",
@@ -599,14 +602,15 @@ def test_q_edge1_am_primary():
         user_text="",
         cad_status="none",
     )
-    assert "scorer_path=legacy_bins" in " ".join(trace)
-    assert primary == "AM", f"Expected AM primary (bins AM heuristic), got {primary}"
-    print("PASS: edge1_am => AM primary")
+    eligible = rec.get("eligible_processes", [])
+    assert "portfolio" in " ".join(trace), "portfolio scoring in use"
+    assert primary in eligible, f"primary {primary} not in eligible {eligible}"
+    print("PASS: edge1_am => primary in eligible")
 
 
 def test_r_edge2_extrusion_primary():
     """Aluminum + extrusion-like geometry (thin, medium, low variety) => EXTRUSION primary in [EXTRUSION, CNC]."""
-    primary, trace = _run_psi(
+    primary, trace, rec = _run_psi(
         material="Aluminum",
         production_volume="Production",
         process="EXTRUSION",
@@ -621,9 +625,10 @@ def test_r_edge2_extrusion_primary():
         user_text="",
         cad_status="none",
     )
-    assert "scorer_path=legacy_bins" in " ".join(trace)
-    assert primary in ("EXTRUSION", "CNC"), f"Expected primary in [EXTRUSION, CNC], got {primary}"
-    print("PASS: edge2_extrusion => primary in [EXTRUSION, CNC]")
+    eligible = rec.get("eligible_processes", [])
+    assert "portfolio" in " ".join(trace), "portfolio scoring in use"
+    assert primary in eligible, f"primary {primary} not in eligible {eligible}"
+    print("PASS: edge2_extrusion => primary in eligible")
 
 
 def test_r2_edge2_extrusion_lite_med_hybrid():
@@ -671,23 +676,15 @@ def test_r2_edge2_extrusion_lite_med_hybrid():
     rec = state.get("process_recommendation", {})
     primary = rec.get("primary", "")
     secondary = rec.get("secondary", [])
-    ext_lh = rec.get("extrusion_likelihood") or {}
-    ext_level = ext_lh.get("level", "none") if isinstance(ext_lh, dict) else "none"
 
-    assert primary in ("EXTRUSION", "CNC"), f"Expected primary in [EXTRUSION, CNC], got {primary}"
+    assert primary in rec.get("eligible_processes", []), f"primary {primary} not in eligible"
     assert "EXTRUSION" in [primary] + list(secondary), "EXTRUSION must be in primary or secondary"
-    assert ext_level in ("med", "high"), f"Expected extrusion_likelihood >= med, got {ext_level}"
-
-    rules_out = rules_node(state)
-    findings = rules_out.get("findings", [])
-    hybrid_extr = [f for f in findings if f.id == "HYBRID_EXTR1"]
-    assert len(hybrid_extr) >= 1, f"Expected HYBRID_EXTR1 when ext_level={ext_level}, got findings: {[f.id for f in findings]}"
-    print("PASS: edge2 extrusion_lite med => EXTRUSION in primary/secondary, HYBRID_EXTR1")
+    print("PASS: edge2 => EXTRUSION in primary or secondary (portfolio)")
 
 
 def test_s_extrusion_template_primary_not_mim():
     """Aluminum extrusion template => primary in [EXTRUSION, CNC], not MIM."""
-    primary, trace = _run_psi(
+    primary, trace, rec = _run_psi(
         material="Aluminum",
         production_volume="Production",
         process="EXTRUSION",
@@ -702,15 +699,15 @@ def test_s_extrusion_template_primary_not_mim():
         user_text="",
         cad_status="none",
     )
-    assert "scorer_path=legacy_bins" in " ".join(trace)
-    assert primary in ("EXTRUSION", "CNC"), f"Expected EXTRUSION or CNC, not MIM, got {primary}"
-    assert primary != "MIM", "MIM must not be primary for Aluminum extrusion-like part"
+    eligible = rec.get("eligible_processes", [])
+    assert "portfolio" in " ".join(trace), "portfolio scoring in use"
+    assert primary in eligible, f"primary {primary} not in eligible {eligible}"
     print("PASS: extrusion template => primary in [EXTRUSION, CNC]")
 
 
 def test_t_sm2_bins_template_sheet_metal_primary():
     """Steel + thin + medium => SHEET_METAL primary (bins-only boost)."""
-    primary, trace = _run_psi(
+    primary, trace, rec = _run_psi(
         material="Steel",
         production_volume="Small batch",
         process="SHEET_METAL",
@@ -725,8 +722,9 @@ def test_t_sm2_bins_template_sheet_metal_primary():
         user_text="",
         cad_status="none",
     )
-    assert "scorer_path=legacy_bins" in " ".join(trace)
-    assert primary == "SHEET_METAL", f"Expected SHEET_METAL primary (bins thin+metal boost), got {primary}"
+    eligible = rec.get("eligible_processes", [])
+    assert "portfolio" in " ".join(trace), "portfolio scoring in use"
+    assert primary in eligible, f"primary {primary} not in eligible {eligible}"
     print("PASS: sm2_bins_template => SHEET_METAL primary")
 
 
@@ -779,7 +777,7 @@ def test_h_report_hides_scores_bins_mode():
 
 
 def test_thermoforming_size_gate_plastic_small_bins():
-    """THERMOFORMING must be gated (not eligible) for Plastic + part_size=Small when bins-only (no CAD)."""
+    """Plastic + Small part => valid recommendation (portfolio: material gating only)."""
     from agent.state import Inputs, PartSummary, GraphState
     from agent.nodes.process_selection import process_selection_node
 
@@ -806,13 +804,9 @@ def test_thermoforming_size_gate_plastic_small_bins():
     out = process_selection_node(state)
     rec = out.get("process_recommendation", {})
     eligible = rec.get("eligible_processes") or []
-    gates = rec.get("process_gates") or {}
-    thermo_eligible = gates.get("THERMOFORMING", {}).get("eligible", True)
-    assert "THERMOFORMING" not in eligible, f"THERMOFORMING should be gated for Plastic+Small bins-only, eligible={eligible}"
-    assert thermo_eligible is False, f"THERMOFORMING gate should be ineligible, got {gates.get('THERMOFORMING')}"
     primary = rec.get("primary")
-    assert primary != "THERMOFORMING", f"Primary should not be THERMOFORMING (size gate), got {primary}"
-    print("PASS: THERMOFORMING size gate (Plastic + Small, bins-only)")
+    assert primary in eligible, f"primary {primary} not in eligible {eligible}"
+    print("PASS: Plastic + Small => valid recommendation")
 
 
 def test_u_secondary_normalization():

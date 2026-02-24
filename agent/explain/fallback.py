@@ -56,7 +56,7 @@ def build_fallback_report(state: dict) -> str:
     lines.append("")
     process = inputs.get('process', '')
     if process == "AUTO" and primary:
-        lines.append(f"- Manufacturing process: AUTO")
+        lines.append(f"- Manufacturing process: No specific selection (geometry-driven)")
         lines.append(f"- Recommended process: {primary}")
     else:
         lines.append(f"- Manufacturing process: {process}")

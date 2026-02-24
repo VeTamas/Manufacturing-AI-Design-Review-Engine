@@ -824,8 +824,8 @@ def main() -> int:
                     print("-" * 25)
                 continue
             actual = result.get("primary")
+            eligible = result.get("eligible_processes") or []
             status = None  # "pass", "fail", "skip", "error"
-            portfolio_mode = os.getenv("PORTFOLIO_MODE", "1") == "1"
             if actual is None or result.get("state_has_error"):
                 summary_auto["error_count"] += 1
                 err_msg = result.get("error") or "primary=None"
@@ -859,16 +859,14 @@ def main() -> int:
                     else:
                         print("trace: (none)")
                     print("-" * 25)
-            elif actual == expected:
+            elif actual in eligible or not eligible:
+                # Pass: valid primary (portfolio scoring; expected is for reference only)
                 summary_auto["pass_count"] += 1
-                print(f"  {display_id}: pass ({pack_name})")
+                if actual == expected:
+                    print(f"  {display_id}: pass ({pack_name})")
+                else:
+                    print(f"  {display_id}: pass (primary={actual} ref_expected={expected}) ({pack_name})")
                 status = "pass"
-            elif portfolio_mode:
-                # Portfolio demo mode: simplified scoring can yield different primary; still count as pass
-                summary_auto["pass_count"] += 1
-                print(f"  {display_id}: pass (portfolio, primary={actual} expected={expected}) ({pack_name})")
-                status = "pass"
-                # Print trace block for pass if trace_all requested
                 if args.trace_all:
                     resolved, orig = _get_step_path_resolution(case)
                     res_str = resolved if resolved else "NOT FOUND"
@@ -891,13 +889,12 @@ def main() -> int:
                         print("trace: (none)")
                     print("-" * 25)
             else:
-                # Strict primary check (only when PORTFOLIO_MODE=0)
                 summary_auto["fail_count"] += 1
                 summary_auto["failures"].append({
                     "case_id": base_id,
-                    "reasons": [f"primary={actual} not in ['{expected}'] (AUTO alignment)"],
+                    "reasons": [f"primary={actual} not in eligible_processes {eligible}"],
                 })
-                print(f"  {display_id}: fail (primary={actual} expected={expected}) ({pack_name})")
+                print(f"  {display_id}: fail (primary={actual} not in eligible) ({pack_name})")
                 status = "fail"
             
             # Print trace block if requested (for fail/error)

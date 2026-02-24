@@ -9,17 +9,12 @@ import streamlit as st
 from agent.run import run_agent
 from agent.state import ConfidenceInputs, Inputs, PartSummary
 from app.ui.presets import PRESETS
-from agent.config import CONFIG
 
 st.set_page_config(page_title="CNC Review Agent", layout="wide")
 st.title("Manufacturing AI Design Review Engine")
-
-if CONFIG.portfolio_mode:
-    st.info(
-        "**Portfolio Demo Mode** (simplified scoring). "
-        "Results are deterministic and plausible but use reduced heuristics. "
-        "Set `PORTFOLIO_MODE=0` in your environment to use full scoring locally."
-    )
+st.info(
+    "**Portfolio Release:** simplified deterministic scoring (production heuristics removed)."
+)
 
 debug = st.sidebar.checkbox("Debug", value=False, key="debug")
 if debug:

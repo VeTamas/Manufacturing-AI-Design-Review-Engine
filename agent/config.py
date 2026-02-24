@@ -128,9 +128,6 @@ class AppConfig:
     enable_llm_explain: bool = os.getenv("GOLDEN_TEST") != "1"  # disabled when GOLDEN_TEST=1 for deterministic runs
     strict_privacy: bool = True       # később policy gate-et ide kötjük
 
-    # Portfolio demo mode: use simplified scoring (agent.scoring.portfolio_scoring). Default 1 for public repo.
-    portfolio_mode: bool = os.getenv("PORTFOLIO_MODE", "1") == "1"
-
     enable_cache: bool = True
     cache_dir: str = "data/outputs/cache"
     cache_ttl_seconds: int = 60 * 60 * 24  # 24h

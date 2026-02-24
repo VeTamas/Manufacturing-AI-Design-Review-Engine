@@ -4,18 +4,10 @@
 ---
 
 > **Portfolio / public version**  
-> This repository is a portfolio-safe release. Proprietary scoring heuristics, production tie-break logic, and internal optimization layers have been simplified or replaced with minimal deterministic examples and clear comments. The system runs in demo mode with simplified scoring, optional RAG (minimal sample KB), and optional LLM explanation. No private datasets, API keys, or FAISS indices are committed.
-
----
-
-## Portfolio Demo Mode
-
-**Default: `PORTFOLIO_MODE=1`** (simplified scoring for public repo.)
-
-- **Scoring:** Process selection uses a small set of simplified rules and weights in `agent/scoring/portfolio_scoring.py`. Results are deterministic and plausible but **not** equivalent to production heuristics.
-- **UI:** Streamlit shows a banner when portfolio mode is on.
-- **Disable locally:** Set `PORTFOLIO_MODE=0` (in `.env` or environment) to use the full production scoring and tie-break logic in `agent/nodes/process_selection.py`. You can then plug in or extend your own scoring module by keeping the same interface (eligible processes, gates, material, volume, part bins, user text → primary, secondary, scores, reasons).
-- **Golden tests:** With `PORTFOLIO_MODE=1`, golden tests run but primary-process expectations are relaxed (portfolio scoring can yield different primaries than production). Use `PORTFOLIO_MODE=0` when validating against production expected primaries.
+> This repository is a **portfolio-safe release** of an industrial AI engineering prototype.  
+> **Production manufacturability heuristics and proprietary tuning are intentionally not included.**  
+> Process selection uses simplified deterministic baseline rules in `agent/scoring/portfolio_scoring.py`.  
+> No private datasets, API keys, FAISS indices, or internal optimization layers are committed.
 
 ---
 
@@ -36,6 +28,13 @@ It is a deterministic engineering decision system that:
 
 Engineering decisions are deterministic.  
 AI is used only for explanation.
+
+This project focuses on reliable engineering decision support rather than generative AI workflows, targeting privacy-sensitive industrial environments where deterministic evaluation and offline capability are critical.
+
+Quick demo (2 minutes)
+pip install -r requirements.txt
+streamlit run app/streamlit_app.py
+Upload a STEP file → get deterministic DFM report.
 
 ---
 
@@ -327,16 +326,17 @@ Example processes: `cnc`, `sheet_metal`, `am`, `casting`, `forging`, etc.
 ### Rebuild all indices (recommended)
 From repo root:
 
-```powershell
-python scripts/build_kb_index.py
+powershell
+```python scripts/build_kb_index.py```
 
 ## Local embeddings (offline-friendly)
 
 Default mode is local embeddings. To force it explicitly:
 
-$env:EMBEDDING_MODE="local"
+```$env:EMBEDDING_MODE="local"
 $env:LOCAL_EMBED_MODEL="BAAI/bge-small-en-v1.5"
 python scripts/build_kb_index.py
+```
 
 "Note: The first run may download the embedding model if it is not already cached.
 For fully air-gapped machines, you must provide the model files (HuggingFace cache or a prepacked model folder)."
@@ -356,10 +356,56 @@ data/outputs/kb_index/cnc/metadata.json
 
 ## How to Run Locally (Windows)
 
-    python -m venv .venv
+    ```python -m venv .venv
     .\.venv\Scripts\Activate.ps1
     pip install -r requirements.txt
-    streamlit run app/streamlit_app.py
+    streamlit run app/streamlit_app.py```
+
+---
+
+## Optional Local LLM Explanations (Fully Offline)
+
+Manufacturing scoring and process classification remain fully deterministic.  
+The optional LLM layer is used only for explanation, phrasing, and report clarity.
+
+If no LLM is configured, the system still produces complete deterministic reports.
+
+### Install Ollama
+
+https://ollama.ai/download
+
+Verify:
+
+bash
+```ollama --version```
+
+Pull a model
+```ollama pull jamba2-3b-q6k```
+
+Enable local LLM
+
+Windows (PowerShell):
+```$env:LLM_MODE="local"
+$env:OLLAMA_BASE_URL="http://localhost:11434"
+$env:OLLAMA_MODEL="jamba2-3b-q6k"
+```
+
+Linux / macOS:
+```export LLM_MODE=local
+export OLLAMA_BASE_URL=http://localhost:11434
+export OLLAMA_MODEL=jamba2-3b-q6k
+```
+
+Then run:
+```streamlit run app/streamlit_app.py```
+
+Disable LLM completely
+```LLM_MODE=off```
+
+Notes:
+- Runs fully offline when using local models.
+- Cloud APIs are optional and disabled by default in offline mode.
+- Smaller models are recommended for local demo performance.
 
 ---
 
@@ -375,7 +421,7 @@ Run the CLI on a sample STEP file to confirm the pipeline and portfolio scoring 
    ```powershell
    python scripts/run_step_cli.py path\to\file.STEP --process AUTO --material Aluminum --volume Proto
    ```
-3. **Expect:** A report with a **primary** process, **secondary** options, **findings**, and **reasons**. No errors. With `PORTFOLIO_MODE=1` (default), scoring is simplified; primary may differ from production.
+3. **Expect:** A report with a **primary** process, **secondary** options, **findings**, and **reasons**. No errors.
 
 ---
 
@@ -395,46 +441,6 @@ Env overrides:
 - CNCR_UI_HOST (127.0.0.1)
 - CNCR_UI_PORT (8501)
 - CNCR_DEBUG=1
-
----
-
-## Using Local Ollama Model
-
-Install:
-
-https://ollama.ai/download
-
-Pull model:
-
-    ollama pull jamba2-3b-q6k
-
-**Windows (after activating venv):** run once so local LLM is “just on” with no manual env juggling:
-
-    .\scripts\dev_env.ps1
-
-Or set environment manually:
-
-    $env:LLM_MODE="local"
-    $env:OLLAMA_BASE_URL="http://localhost:11434"
-    $env:OLLAMA_MODEL="jamba2-3b-q6k"
-
-Optional: copy `.env.example` to `.env` for local defaults (do not commit `.env`). The app loads `.env` if present.
-
-Verify resolved LLM config and trace:
-
-    python scripts/print_llm_status.py
-
-Test:
-
-    python scripts/test_ollama_explain.py
-
-**CNCR_OFFLINE:** `CNCR_OFFLINE=1` disables **cloud** (OpenAI) only; local Ollama remains active and preferred. Offline mode does not disable local LLM.
-
-Variables:
-
-- LLM_MODE = remote | local | hybrid | off
-- OLLAMA_BASE_URL, OLLAMA_MODEL, LLM_TIMEOUT_SECONDS
-- CNCR_LLM_MODE, CNCR_OLLAMA_BASE_URL, CNCR_OLLAMA_MODEL override the above when set
 
 ---
 

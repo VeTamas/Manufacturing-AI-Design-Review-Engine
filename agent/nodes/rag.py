@@ -706,12 +706,12 @@ def rag_node(state: GraphState) -> dict:
         query_parts = [f"{f.title}: {f.recommendation}" for f in findings]
         query = " ".join(query_parts)
     
-    # Effective process for RAG: when user_selected=AUTO, use recommended primary (no "auto" index)
+    # Effective process for RAG: when no specific process selected (AUTO), use recommended primary (no "auto" index)
     proc_rec = state.get("process_recommendation") or {}
     primary = proc_rec.get("primary")
     if process == "AUTO":
         effective_process_for_rag = primary if primary else "CNC"
-        trace_delta.append(f"RAG: selected=AUTO → effective_process_for_rag={effective_process_for_rag}")
+        trace_delta.append(f"RAG: no specific process (AUTO) → effective_process_for_rag={effective_process_for_rag}")
     else:
         effective_process_for_rag = process
 
