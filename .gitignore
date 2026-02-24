@@ -15,11 +15,10 @@ venv/
 
 # Caches and generated artifacts
 .cache/
-data/outputs/cache/
-data/outputs/cache/embeddings/
-data/uploads/
+# generated outputs (do not publish)
+artifacts/
+data/outputs/
 # FAISS vector store and KB index (rebuild with scripts/build_kb_index.py)
-data/outputs/kb_index/
 *.faiss
 index.faiss
 
