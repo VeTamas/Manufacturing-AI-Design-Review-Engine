@@ -321,8 +321,8 @@ Example processes: `cnc`, `sheet_metal`, `am`, `casting`, `forging`, etc.
 ### Rebuild all indices (recommended)
 From repo root:
 
-```powershell
-python scripts/build_kb_index.py```
+powershell
+```python scripts/build_kb_index.py```
 
 ## Local embeddings (offline-friendly)
 
