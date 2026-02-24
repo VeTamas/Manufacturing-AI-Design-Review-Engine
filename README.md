@@ -382,7 +382,8 @@ Enable local LLM
 Windows (PowerShell):
 ```$env:LLM_MODE="local"
 $env:OLLAMA_BASE_URL="http://localhost:11434"
-$env:OLLAMA_MODEL="jamba2-3b-q6k"```
+$env:OLLAMA_MODEL="jamba2-3b-q6k"
+```
 
 Linux / macOS:
 ```export LLM_MODE=local
