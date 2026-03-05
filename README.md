@@ -7,6 +7,14 @@ This system combines rule-based engineering evaluation with retrieval and LLM ex
 Key idea:
 Deterministic evaluation for reliability + AI explanations for human-readable insights.
 
+## Problem
+
+Engineering design reviews are often manual and time-consuming.
+
+## Solution
+
+This project demonstrates how deterministic evaluation workflows can be combined with LLM-based explanation layers to automate analysis while preserving reliability.
+
 ### Offline-First Manufacturability Intelligence System
 
 ---
@@ -85,6 +93,16 @@ LLM is **not required** for manufacturability scoring.
 ---
 
 ## System Architecture
+
+CAD Input
+   │
+Rule-based Evaluation
+   │
+Retrieval Layer (FAISS)
+   │
+LLM Explanation (Ollama)
+   │
+Automated Engineering Report
 
 ### Geometry Layer (Fully Local)
 
