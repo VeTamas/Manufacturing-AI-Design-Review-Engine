@@ -15,6 +15,14 @@ Engineering design reviews are often manual and time-consuming.
 
 This project demonstrates how deterministic evaluation workflows can be combined with LLM-based explanation layers to automate analysis while preserving reliability.
 
+## Example output:
+Input: Part geometry
+Detected Process: CNC Milling
+Score: 82/100
+
+LLM Explanation:
+The geometry appears suitable for CNC machining...
+
 ### Offline-First Manufacturability Intelligence System
 
 ---
