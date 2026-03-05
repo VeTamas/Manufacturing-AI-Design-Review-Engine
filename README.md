@@ -1,4 +1,12 @@
-# Manufacturing AI Design Review Engine  
+# Manufacturing AI Design Review Engine
+
+AI-assisted workflow for automated manufacturability analysis.
+
+This system combines rule-based engineering evaluation with retrieval and LLM explanations to support automated design review workflows.
+
+Key idea:
+Deterministic evaluation for reliability + AI explanations for human-readable insights.
+
 ### Offline-First Manufacturability Intelligence System
 
 ---
